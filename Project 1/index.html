@@ -6,14 +6,25 @@
 		<title>Falcon Compiler</title>
 		<meta name="description" content="Falcon Compiler">
 		<meta name="author" content="John DeFalco">
+
+		<!-- link to css sheet -->
+		<link rel="stylesheet" type="text/css" href="style.css" />
 	</head>
 
 	<body>
 		<h1 tag="Title">Welcome to the Falcon Compiler!</h1>
 
-		<p>Enter sample program or programs below in text box, and hit the 'Compile' button to begin.</p><br>
-		<textarea rows="15" cols="50" type="text" name="sc"></textarea><br>
-		<button type="button" name="start" onclick="">Compile</button>
-
+		<p>Enter sample program or programs below in the text box, and hit the 'Compile' button to begin.</p><br>
+		<!-- div containing source code / compile button -->
+		<div class="col1">
+			<h3>Input Source Code:</h3>
+			<textarea rows="15" cols="50" type="text" name="sc"></textarea><br>
+			<button type="button" name="start" onclick="">Compile</button>
+		</div>
+		<!-- div containing output text area -->
+		<div class="col2">
+			<h3>Console Output:</h3>
+			<textarea rows="15" cols="50" type="text" name="output" disabled></textarea>
+		</div>
 	</body>
 </html>
