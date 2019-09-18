@@ -53,5 +53,9 @@ function lexer(){
 	// Addition Operator
 	var ADD = /'\+$'/;
 	// Assign Operator
-	var ASSIGN = /'\='/;
+	var ASSIGN = /'\=$'/;
+	// Comment Beginning 
+	var COM_BEGIN = /'\/\*$'/;
+	// Comment End
+	var COM_END = /'\*\\'/;
 }
