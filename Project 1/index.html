@@ -18,13 +18,14 @@
 		<!-- div containing source code / compile button -->
 		<div class="col1">
 			<h3>Input Source Code:</h3>
-			<textarea rows="15" cols="50" type="text" name="sc"></textarea><br>
-			<button type="button" name="start" onclick="">Compile</button>
+			<textarea rows="15" cols="50" type="text" id="sc"></textarea><br>
+			<button type="button" name="start" onclick="lexer();">Compile</button>
 		</div>
 		<!-- div containing output text area -->
 		<div class="col2">
 			<h3>Console Output:</h3>
 			<textarea rows="15" cols="50" type="text" name="output" disabled></textarea>
 		</div>
+	<script type="text/javascript" src="lexer.js"></script>
 	</body>
 </html>
