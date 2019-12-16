@@ -12,3 +12,7 @@ var Token(type, kind, line, column) {
 	this.line = line;
 	this.column = column;
 }
+
+Token.is = function (check) {
+	return this.type = check;
+}
