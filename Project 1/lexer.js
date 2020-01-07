@@ -21,6 +21,9 @@ function lexer(source){
 	//Number of errors in lex
 	var error = 0;
 
+	// Number of program currently lexing 
+	var progNumber = 1;
+
 	// Defining tokens from the class grammar
 	// Print (lowercase r for regex)
 	var PRINT_r = /'print$'/; 
@@ -42,8 +45,6 @@ function lexer(source){
 	var FALSE_r = /'false$'/;
 	// Char 
 	var CHAR_r = /'[a-z]$'/;
-	// Id
-	var ID_r = /'[a-z]$'/;
 	// Space
 	var SPACE_r = /'\s$'/;
 	// Digit
@@ -75,6 +76,10 @@ function lexer(source){
 	// Split input into lines
 	var lines = source.split("\n");
 
+	// Starting Lexer message
+	// Staring with program 1
+	Log(/*Lexer start message here*/);
+
 	// Go through the input line by line with for loop
 	for (var i = 0; i < lines.length; i++) {
 		// Current row
@@ -100,186 +105,191 @@ function lexer(source){
 		    *
 		    */
 
+		   // Keywords and IDs must be found outside of strings, otherwise CHAR tokens
+		   while (!isString) {
 
-			// Check if the character at the pointer is equal to w 
-			if (line.charAt(tokenPointer) == 'w') {
+				// Check if the character at the pointer is equal to w 
+				if (line.charAt(tokenPointer) == 'w') {
 
-			 	// Check to see if the following characters match the regex pattern for 'while' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(WHILE_r)) {
+				 	// Check to see if the following characters match the regex pattern for 'while' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(WHILE_r)) {
 
-			 		// Add WHILE token
-			 		addToken("WHILESTMT", "while", i + 1, tokenPointer + 1);
+				 		// Add WHILE token
+				 		addToken("WHILESTMT", "while", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer += 5;
+				 		// Move pointer
+				 		tokenPointer += 5;
 
-			 	} else {
-			 		// If the character is present and not part of the keyword, it must be char token
+				 	} else {
+				 		// If the character is present, not part of string and not part of the keyword, it must be ID token
 
-			 		// Add ID token for letter 'w'
-			 		addToken("CHAR", "w", i + 1, tokenPointer + 1);
+				 		// Add ID token for letter 'w'
+				 		addToken("ID", "w", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
-			 	}
+				 		// Move pointer
+				 		tokenPointer++;
+					 	
+				 	}
 
-			}
+				}
 
-			// Check if the character at the pointer is equal to i 
-			if (line.charAt(tokenPointer) == 'i') {
+				// Check if the character at the pointer is equal to i 
+				if (line.charAt(tokenPointer) == 'i') {
 
-			 	// Check to see if the following character matches the regex pattern for 'if' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 2)).match(IF_r)) {
+				 	// Check to see if the following character matches the regex pattern for 'if' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 2)).match(IF_r)) {
 
-			 		// Add IF token
-			 		addToken("IFSTMT", "if", i + 1, tokenPointer + 1);
+				 		// Add IF token
+				 		addToken("IFSTMT", "if", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer += 2;
+				 		// Move pointer
+				 		tokenPointer += 2;
 
-			 	} else if ((line.substring(tokenPointer, tokenPointer + 3)).match(INT_r)) {
-			 		// Check to see if the following characters matches the regex pattern for 'int' keyword
+				 	} else if ((line.substring(tokenPointer, tokenPointer + 3)).match(INT_r)) {
+				 		// Check to see if the following characters matches the regex pattern for 'int' keyword
 
-			 		// Add INT token
-			 		addToken("V_TYPE", "int", i + 1, tokenPointer + 1);
+				 		// Add INT token
+				 		addToken("V_TYPE", "int", i + 1, tokenPointer + 1);
 
-					// Move pointer
-			 		tokenPointer += 3;
+						// Move pointer
+				 		tokenPointer += 3;
 
-			 	} else {
-			 		// If the character is present and not part of the keyword, it must be char token
+				 	} else {
+				 		// If the character is present and not part of the keyword, it must be char token
 
-			 		// Add ID token for letter 'i'
-			 		addToken("CHAR", "i", i + 1, tokenPointer + 1);
+				 		// Add ID token for letter 'i'
+				 		addToken("CHAR", "i", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
+				 		// Move pointer
+				 		tokenPointer++;
 
-			 	}
+				 	}
 
-			}
+				}
 
-			// Check if the character at the pointer is equal to s
-			if (line.charAt(tokenPointer) == 's') {
+				// Check if the character at the pointer is equal to s
+				if (line.charAt(tokenPointer) == 's') {
 
-			 	// Check to see if the following characters matches the regex pattern for 'string' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 6)).match(STRING_r)) {
+				 	// Check to see if the following characters matches the regex pattern for 'string' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 6)).match(STRING_r)) {
 
-			 		// Add STRING token
-			 		addToken("V_TYPE", "string", i + 1, tokenPointer + 1);
+				 		// Add STRING token
+				 		addToken("V_TYPE", "string", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer += 6;
+				 		// Move pointer
+				 		tokenPointer += 6;
 
-			 	} else {
-			 		// If the character is present and not part of the keyword, it must be char token
+				 	} else {
+				 		// If the character is present and not part of the keyword, it must be char token
 
-			 		// Add CHAR token for letter 's'
-			 		addToken("CHAR", "s", i + 1, tokenPointer + 1);
+				 		// Add CHAR token for letter 's'
+				 		addToken("CHAR", "s", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
+				 		// Move pointer
+				 		tokenPointer++;
 
-			 	}
+				 	}
 
-			}
+				}
 
-			// Check if the character at the pointer is equal to b
-			if (line.charAt(tokenPointer) == 'b') {
+				// Check if the character at the pointer is equal to b
+				if (line.charAt(tokenPointer) == 'b') {
 
-			 	// Check to see if the following characters matches the regex pattern for 'boolean' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 7)).match(BOOLEAN_r)) {
+				 	// Check to see if the following characters matches the regex pattern for 'boolean' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 7)).match(BOOLEAN_r)) {
 
-			 		// Add BOOLEAN token
-			 		addToken("V_TYPE", "boolean", i + 1, tokenPointer + 1);
+				 		// Add BOOLEAN token
+				 		addToken("V_TYPE", "boolean", i + 1, tokenPointer + 1);
 
-					// Move pointer
-			 		tokenPointer += 7;
+						// Move pointer
+				 		tokenPointer += 7;
 
-			 	} else {
-			 		// If the character is present and not part of the keyword, it must be char token
+				 	} else {
+				 		// If the character is present and not part of the keyword, it must be char token
 
-			 		// Add CHAR token for letter 'b'
-			 		addToken("CHAR", "b", i + 1, tokenPointer + 1);
+				 		// Add CHAR token for letter 'b'
+				 		addToken("CHAR", "b", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
+				 		// Move pointer
+				 		tokenPointer++;
 
-			 	}
+				 	}
 
-			}
+				}
 
-			// Check if the character at the pointer is equal to f
-			if (line.charAt(tokenPointer) == 'f') {
+				// Check if the character at the pointer is equal to f
+				if (line.charAt(tokenPointer) == 'f') {
 
-			 	// Check to see if the following characters matches the regex pattern for 'false' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(FALSE_r)) {
+				 	// Check to see if the following characters matches the regex pattern for 'false' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(FALSE_r)) {
 
-			 		// Add FALSE token
-			 		addToken("BOOL_F", "false", i + 1, tokenPointer + 1);
+				 		// Add FALSE token
+				 		addToken("BOOL_F", "false", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer += 5;
+				 		// Move pointer
+				 		tokenPointer += 5;
 
-			 	} else {
-			 		// If the character is present and not part of the keyword, it must be char token
+				 	} else {
+				 		// If the character is present and not part of the keyword, it must be char token
 
-			 		// Add CHAR token for letter 'f'
-			 		addToken("CHAR", "f", i + 1, tokenPointer + 1);
+				 		// Add CHAR token for letter 'f'
+				 		addToken("CHAR", "f", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
+				 		// Move pointer
+				 		tokenPointer++;
 
-			 	}
+				 	}
 
-			}
+				}
 
-			// Check if the character at the pointer is equal to t
-			if (line.charAt(tokenPointer) == 't') {
+				// Check if the character at the pointer is equal to t
+				if (line.charAt(tokenPointer) == 't') {
 
-			 	// Check to see if the following characters matches the regex pattern for 'true' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 4)).match(TRUE_r)) {
+				 	// Check to see if the following characters matches the regex pattern for 'true' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 4)).match(TRUE_r)) {
 
-			 		// Add TRUE token
-			 		addToken("BOOL_T", "true", i + 1, tokenPointer + 1);
+				 		// Add TRUE token
+				 		addToken("BOOL_T", "true", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer += 4;
+				 		// Move pointer
+				 		tokenPointer += 4;
 
-			 	} else {
-			 		// If the character is present and not part of the keyword, it must be char token
+				 	} else {
+				 		// If the character is present and not part of the keyword, it must be char token
 
-			 		// Add CHAR token for letter 't'
-			 		addToken("CHAR", "t", i + 1, tokenPointer + 1);
+				 		// Add CHAR token for letter 't'
+				 		addToken("CHAR", "t", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
+				 		// Move pointer
+				 		tokenPointer++;
 
-			 	}
+				 	}
 
-			}
+				}
 
-			// Check if the character at the pointer is equal to p
-			if (line.charAt(tokenPointer) == 'p') {
+				// Check if the character at the pointer is equal to p
+				if (line.charAt(tokenPointer) == 'p') {
 
-			 	// Check to see if the following character matches the regex pattern for 'print' keyword
-			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
+				 	// Check to see if the following character matches the regex pattern for 'print' keyword
+				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
 
-			 		// Add PRINT token
-			 		addToken("PRINT", "print", i + 1, tokenPointer + 1);
+				 		// Add PRINT token
+				 		addToken("PRINT", "print", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer += 5;
+				 		// Move pointer
+				 		tokenPointer += 5;
 
-			 	} else {
+				 	} else {
 
-			 		// Add CHAR token for letter 'p'
-			 		addToken("CHAR", "p", i + 1, tokenPointer + 1);
+				 		// Add CHAR token for letter 'p'
+				 		addToken("CHAR", "p", i + 1, tokenPointer + 1);
 
-			 		// Move pointer
-			 		tokenPointer++;
+				 		// Move pointer
+				 		tokenPointer++;
 
-			 	}
+				 	}
+
+				}
 
 			}
 
@@ -499,6 +509,50 @@ function lexer(source){
 			   }
 		   }
 
+		   // Check for EOP character
+		   if((line.charAt(tokenPointer)).match(EOP)) {
+
+		   	// Found outside of string
+		   	if (!isString) {
+
+		   		// If there were any errors, return nothing and display Lexer failed
+					if (error > 0) {
+
+						// Lexer failed message, including warning and error numbers
+						Log(/*Lexer failed message here*/);
+
+						return false;
+
+					} else {
+
+						// Lexer succeeded message, including warning and error numbers
+						Log(/*Lexer success*/);
+
+						// Send token stream to parser
+						/* parse(tokens); */
+
+					}
+		   	
+					// Ensure not at end of program
+					if (i != lines.length && tokenPointer != line.length) {
+
+						// Reset values for token stream, warning counter, and error counter
+						tokens =[];
+						warning = 0;
+						error = 0;
+
+						// Increase program number
+						progNumber++;
+
+						// Message announcing lexing next program
+						Log(/*Lexing program #...*/);
+
+						// Move pointer
+						tokenPointer++;
+					}
+		   	}
+		   }
+
 		   // Check for whitspace character
 		   if((line.charAt(tokenPointer)) == ' ') {
 
@@ -512,6 +566,55 @@ function lexer(source){
 		    *	Digits
 		    *
 		    */
+
+		   // Check if the character in question matches any digit 0-9
+		   if ((line.charAt(tokenPointer)).match(DIGIT_r)) {
+
+		   	if(!isString) {
+			   	// Add DIGIT token
+			   	addToken("DIGIT", line.charAt(tokenPointer), i + 1, tokenPointer + 1);
+
+			   	// Move pointer
+			   	tokenPointer++;
+			   } else {
+			   	// Digit not accepted in string in grammar
+			   	// Throw error
+
+			   	Log(/*Error message here*/);
+
+			   	// Add to error counter
+			   	error++;
+			   }
+
+		   }
+
+		   /*
+		    *
+		    *	Characters / ID
+		    *
+		    */
+
+		   // See if character matches CHAR/ID regex
+		   if ((line.charAt(tokenPointer)).match(CHAR_r)) {
+
+		   	// If not in string
+		   	if (!isString) {
+
+		   		// Add ID token
+		   		addToken("ID", line.charAt(tokenPointer), i + 1, tokenPointer + 1);
+
+		   		// Move pointer
+		   		tokenPointer++;
+		   	} else {
+		   		// If in string
+
+		   		// Add CHAR token
+		   		addToken("CHAR", line.charAt(tokenPointer), i + 1, tokenPointer + 1);
+
+		   		// Move pointer
+		   		tokenPointer++;
+		   	}
+		   }
 
 
 
@@ -527,26 +630,12 @@ function lexer(source){
 			// Add to warning counter
 			warning++;
 
-			// Add EOP token
-			addToken("EOP", "$", line, tokenPointer);
+			// Add EOP token to token stream
+			addToken("EOP", "$", i + 1, tokenPointer + 1);
+
+			// Add EOP to program
+			line = line + '$';
 		}
-	}
-
-	// If there were any errors, return nothing and display Lexer failed
-	if (error > 0) {
-
-		// Lexer failed message, including warning and error numbers
-		Log(/*Lexer failed message here*/);
-
-		return false;
-
-	} else {
-
-		// Lexer succeeded message, including warning and error numbers
-		Log(/*Lexer success*/);
-
-		// Return token stream
-		return tokens;
 	}
 }
 
