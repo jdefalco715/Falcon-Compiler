@@ -5,5 +5,5 @@
 function trim(str) {
 	// Removes leading and trailing whitespaces in selected string
 	// For this project, the string would be the source code meant to compile
-	return str.replace(/^\s | \s+$/g, "");
+	return str.replace(/^\s|\s+$/gm, "");
 }
