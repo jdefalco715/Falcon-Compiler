@@ -94,15 +94,15 @@ function lexer(source){
 			 *   - CHARACTERS
 			 */			 
 
-			 /*
-			  *
-			  *	Keywords
-			  *
-			  */
+			/*
+			 *
+			 *	Keywords
+		    *
+		    */
 
 
-			 // Check if the character at the pointer is equal to w 
-			 if (line.charAt(tokenPointer) == 'w') {
+			// Check if the character at the pointer is equal to w 
+			if (line.charAt(tokenPointer) == 'w') {
 
 			 	// Check to see if the following characters match the regex pattern for 'while' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(WHILE_r)) {
@@ -123,10 +123,10 @@ function lexer(source){
 			 		tokenPointer++;
 			 	}
 
-			 }
+			}
 
-			 // Check if the character at the pointer is equal to i 
-			 if (line.charAt(tokenPointer) == 'i') {
+			// Check if the character at the pointer is equal to i 
+			if (line.charAt(tokenPointer) == 'i') {
 
 			 	// Check to see if the following character matches the regex pattern for 'if' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 2)).match(IF_r)) {
@@ -157,10 +157,10 @@ function lexer(source){
 
 			 	}
 
-			 }
+			}
 
-			 // Check if the character at the pointer is equal to s
-			 if (line.charAt(tokenPointer) == 's') {
+			// Check if the character at the pointer is equal to s
+			if (line.charAt(tokenPointer) == 's') {
 
 			 	// Check to see if the following characters matches the regex pattern for 'string' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 6)).match(STRING_r)) {
@@ -182,10 +182,10 @@ function lexer(source){
 
 			 	}
 
-			 }
+			}
 
-			 // Check if the character at the pointer is equal to b
-			 if (line.charAt(tokenPointer) == 'b') {
+			// Check if the character at the pointer is equal to b
+			if (line.charAt(tokenPointer) == 'b') {
 
 			 	// Check to see if the following characters matches the regex pattern for 'boolean' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 7)).match(BOOLEAN_r)) {
@@ -207,10 +207,10 @@ function lexer(source){
 
 			 	}
 
-			 }
+			}
 
-			 // Check if the character at the pointer is equal to f
-			 if (line.charAt(tokenPointer) == 'f') {
+			// Check if the character at the pointer is equal to f
+			if (line.charAt(tokenPointer) == 'f') {
 
 			 	// Check to see if the following characters matches the regex pattern for 'false' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(FALSE_r)) {
@@ -232,10 +232,10 @@ function lexer(source){
 
 			 	}
 
-			 }
+			}
 
-			 // Check if the character at the pointer is equal to t
-			 if (line.charAt(tokenPointer) == 't') {
+			// Check if the character at the pointer is equal to t
+			if (line.charAt(tokenPointer) == 't') {
 
 			 	// Check to see if the following characters matches the regex pattern for 'true' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 4)).match(TRUE_r)) {
@@ -257,10 +257,10 @@ function lexer(source){
 
 			 	}
 
-			 }
+			}
 
-			 // Check if the character at the pointer is equal to p
-			 if (line.charAt(tokenPointer) == 'p') {
+			// Check if the character at the pointer is equal to p
+			if (line.charAt(tokenPointer) == 'p') {
 
 			 	// Check to see if the following character matches the regex pattern for 'print' keyword
 			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
@@ -281,238 +281,239 @@ function lexer(source){
 
 			 	}
 
-			 }
+			}
 
-			 /*
-			  *
-			  *	End of Keywords
-			  *
-			  */
+			/*
+			 *
+			 *	Symbols
+			 *
+			 */
 
-			  /*
-			   *
-			   *	Symbols
-			   *
-			   */
+			// Check for quotation symbol
+			if ((line.charAt(tokenPointer)).match(QUOTE_r)) {
 
-			   // Check for quotation symbol
-			   if ((line.charAt(tokenPointer)).match(QUOTE_r)) {
+			   // Add QUOTE token
+			   addToken("QUOTE", "\"", i + 1, tokenPointer + 1);
 
-			   	// Add QUOTE token
-			   	addToken("QUOTE", "\"", i + 1, tokenPointer + 1);
+			   // If not already in a string, set isString to true
+			   if(!isString)
+			   	isString = true;
+			   else // If in string, end it
+			   	isString = false;
 
-			   	// If not already in a string, set isString to true
-			   	if(!isString)
-			   		isString = true;
-			   	else // If in string, end it
-			   		isString = false;
+			}
+
+			// Check to see if the character matches the regex pattern for the assign token
+			if ((line.charAt(tokenPointer)).match(ASSIGN_r)){
+
+			 	// Check if in string, if not all good
+			  	if(!isString) {
+
+			   	// Differentiate between assign and compare
+			   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
+
+			   		// Add ISEQUAL token
+			   		addToken("ISEQUAL", "==", i + 1, tokenPointer + 1);
+
+			   		tokenPointer += 2;
+			   	} else {
+			   		// If the character is not followed by another '=', it must be ASSIGN
+
+			   		// Add ASSIGN token
+			   		addToken("ASSIGN", "=", i + 1, tokenPointer + 1);
+
+			   		// Move pointer
+			   		tokenPointer++;
+			   	}
+
+				  } else {
+
+				  	// symbol not valid in string
+				  	// throws error
+
+				  	Log(/*Error message here*/);
+	
+			   	// Add to error counter
+			   	error++;
 
 			   }
+			}
 
-			   // Check to see if the character matches the regex pattern for the assign token
-			   if ((line.charAt(tokenPointer)).match(ASSIGN_r)){
+			// Check if the character is exclamation point
+			if ((line.charAt(tokenPointer)) == "!") {
+				// Check if in string, if not all good
+			  	if(!isString) {
 
-			   	// Check if in string, if not all good
-			   	if(!isString) {
+			   	// See if the two characters match the regex pattern for not equals
+			   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(NOT_EQUALS)) {
 
-				   	// Differentiate between assign and compare
-				   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
+			   		// Add NOTEQUAL token
+			   		addToken("NOTEQUAUL", "!=", i + 1, tokenPointer + 1);
 
-				   		// Add ISEQUAL token
-				   		addToken("ISEQUAL", "==", i + 1, tokenPointer + 1);
+			   		// Move pointer
+			   		tokenPointer += 2;
+			   	} else {
+				  		// Exclamation point by itself not valid in language
+				  		// throws error
 
-				   		tokenPointer += 2;
-				   	} else {
-				   		// If the character is not followed by another '=', it must be ASSIGN
+				  		Log(/*Error message here*/);
 
-				   		// Add ASSIGN token
-				   		addToken("ASSIGN", "=", i + 1, tokenPointer + 1);
+				  		error++;
+				  	}
 
-				   		// Move pointer
-				   		tokenPointer++;
-				   	}
+				} else {
 
-				   } else {
+				   // symbol not valid in string
+				   // throws error
 
-				   	// symbol not valid in string
-				   	// throws error
+				   Log(/*Error message here*/);
 
-				   	Log(/*Error message here*/);
+				   // Add to error counter
+				   error++;
 
-				   	// Add to error counter
-				   	error++;
+				}
+			}
 
-				   }
-			   }
-
-			   // Check if the character is exclamation point
-			   if ((line.charAt(tokenPointer)) == "!") {
-
-					// Check if in string, if not all good
-			   	if(!isString) {
-
-				   	// See if the two characters match the regex pattern for not equals
-				   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(NOT_EQUALS)) {
-
-				   		// Add NOTEQUAL token
-				   		addToken("NOTEQUAUL", "!=", i + 1, tokenPointer + 1);
-
-				   		// Move pointer
-				   		tokenPointer += 2;
-				   	} else {
-				   		// Exclamation point by itself not valid in language
-				   		// throws error
-
-				   		Log(/*Error message here*/);
-
-				   		error++;
-				   	}
-
-				   } else {
-
-				   	// symbol not valid in string
-				   	// throws error
-
-				   	Log(/*Error message here*/);
-
-				   	// Add to error counter
-				   	error++;
-
-				   }
-			   }
-
-			   // Check if character matches plus symbol
-			   if((line.charAt(tokenPointer)) == '+') {
+			// Check if character matches plus symbol
+			if((line.charAt(tokenPointer)) == '+') {
 					
-					// Check if in string, if not all good
-			   	if(!isString) {
+				// Check if in string, if not all good
+			  	if(!isString) {
 
-				   	// Add PLUS token
-				   	addToken("PLUS", "+", i + 1, tokenPointer + 1);
+			   	// Add PLUS token
+			   	addToken("PLUS", "+", i + 1, tokenPointer + 1);
 
-				   	// Move pointer
-				   	tokenPointer++;
-
-				   } else {
-
-				   	// symbol not valid in string
-				   	// throws error
-
-				   	Log(/*Error message here*/);
-
-				   	// Add to error counter
-				   	error++;
-
-				   }
-			   }
-
-			   // Check for left paren
-			   if((line.charAt(tokenPointer)) == '(') {
-					
-					// Check if in string, if not all good
-			   	if(!isString) {
-
-				   	// Add L_PAREN token
-				   	addToken("L_PAREN", "(", i + 1, tokenPointer + 1);
-
-				   	// Move pointer
-				   	tokenPointer++;
-
-				   } else {
-
-				   	// symbol not valid in string
-				   	// throws error
-
-				   	Log(/*Error message here*/);
-
-				   	// Add to error counter
-				   	error++;
-
-				   }
-			   }
-
-			   // Check for right paren
-			   if((line.charAt(tokenPointer)) == ')') {
-					
-					// Check if in string, if not all good
-			   	if(!isString) {
-
-				   	// Add R_PAREN token
-				   	addToken("R_PAREN", ")", i + 1, tokenPointer + 1);
-
-				   	// Move pointer
-				   	tokenPointer++;
-
-				   } else {
-
-				   	// symbol not valid in string
-				   	// throws error
-
-				   	Log(/*Error message here*/);
-
-				   	// Add to error counter
-				   	error++;
-
-				   }
-			   }
-
-			   // Check for left brace
-			   if((line.charAt(tokenPointer)) == '{') {
-					
-					// Check if in string, if not all good
-			   	if(!isString) {
-
-				   	// Add L_BRACE token
-				   	addToken("L_BRACE", ")", i + 1, tokenPointer + 1);
-
-				   	// Move pointer
-				   	tokenPointer++;
-
-				   } else {
-
-				   	// symbol not valid in string
-				   	// throws error
-
-				   	Log(/*Error message here*/);
-
-				   	// Add to error counter
-				   	error++;
-
-				   }
-			   }
-
-			   // Check for right brace
-			   if((line.charAt(tokenPointer)) == '}') {
-					
-					// Check if in string, if not all good
-			   	if(!isString) {
-
-				   	// Add R_BRACE token
-				   	addToken("R_BRACE", ")", i + 1, tokenPointer + 1);
-
-				   	// Move pointer
-				   	tokenPointer++;
-
-				   } else {
-
-				   	// symbol not valid in string
-				   	// throws error
-
-				   	Log(/*Error message here*/);
-
-				   	// Add to error counter
-				   	error++;
-
-				   }
-			   }
-
-			   // Check for whitspace character
-			   if((line.charAt(tokenPointer)) == ' ') {
-
-			   	// Ignore and move pointer
+			   	// Move pointer
 			   	tokenPointer++;
-			   	
+
+			   } else {
+
+			   	// symbol not valid in string
+			   	// throws error
+
+			   	Log(/*Error message here*/);
+
+			   	// Add to error counter
+			   	error++;
+
 			   }
+			}
+
+			// Check for left paren
+			if((line.charAt(tokenPointer)) == '(') {
+					
+				// Check if in string, if not all good
+			   if(!isString) {
+
+				  	// Add L_PAREN token
+				  	addToken("L_PAREN", "(", i + 1, tokenPointer + 1);
+
+				  	// Move pointer
+				  	tokenPointer++;
+
+				} else {
+
+				  	// symbol not valid in string
+				  	// throws error
+
+				  	Log(/*Error message here*/);
+
+				  	// Add to error counter
+				  	error++;
+
+				}
+			}
+
+			// Check for right paren
+			if((line.charAt(tokenPointer)) == ')') {
+					
+				// Check if in string, if not all good
+			   if(!isString) {
+
+				  	// Add R_PAREN token
+				  	addToken("R_PAREN", ")", i + 1, tokenPointer + 1);
+
+				  	// Move pointer
+				  	tokenPointer++;
+
+				} else {
+
+				  	// symbol not valid in string
+				  	// throws error
+
+				  	Log(/*Error message here*/);
+
+				  	// Add to error counter
+				  	error++;
+
+				}
+			}
+
+			// Check for left brace
+			if((line.charAt(tokenPointer)) == '{') {
+					
+				// Check if in string, if not all good
+			  	if(!isString) {
+
+			   	// Add L_BRACE token
+			   	addToken("L_BRACE", ")", i + 1, tokenPointer + 1);
+
+			   	// Move pointer
+			   	tokenPointer++;
+
+			   } else {
+
+			   	// symbol not valid in string
+			   	// throws error
+
+			   	Log(/*Error message here*/);
+
+			   	// Add to error counter
+			   	error++;
+
+			   }
+			}
+
+			// Check for right brace
+			if((line.charAt(tokenPointer)) == '}') {
+					
+				// Check if in string, if not all good
+			  	if(!isString) {
+
+			   	// Add R_BRACE token
+			   	addToken("R_BRACE", ")", i + 1, tokenPointer + 1);
+
+			   	// Move pointer
+			   	tokenPointer++;
+
+			   } else {
+
+			   	// symbol not valid in string
+			   	// throws error
+
+			   	Log(/*Error message here*/);
+
+			   	// Add to error counter
+			   	error++;
+
+			   }
+		   }
+
+		   // Check for whitspace character
+		   if((line.charAt(tokenPointer)) == ' ') {
+
+		   	// Ignore and move pointer
+		   	tokenPointer++;
+
+		   }
+
+		   /*
+		    *
+		    *	Digits
+		    *
+		    */
+
+
 
 		}
 
@@ -534,12 +535,15 @@ function lexer(source){
 	// If there were any errors, return nothing and display Lexer failed
 	if (error > 0) {
 
-		// Lexer failed message
+		// Lexer failed message, including warning and error numbers
 		Log(/*Lexer failed message here*/);
 
 		return false;
 
 	} else {
+
+		// Lexer succeeded message, including warning and error numbers
+		Log(/*Lexer success*/);
 
 		// Return token stream
 		return tokens;
