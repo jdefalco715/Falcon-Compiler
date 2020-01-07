@@ -97,7 +97,29 @@ function lexer(source){
 			 *   - SYMBOLS
 			 *   - DIGIT
 			 *   - CHARACTERS
-			 */			 
+			 */	
+
+			// Check for comment start
+			if ((line.substring(tokenPointer, tokenPointer + 1)).match(COM_BEGIN)) {
+
+				tokenPointer += 2;
+
+				// Lexer will ignore and not add comments to token stream
+				// This loop moves the pointer until end of comment is found
+				while (!(line.substring(tokenPointer, tokenPointer + 1)).match(COM_END)) {
+					
+					tokenPointer++;
+
+					isComment = true;
+				}
+
+				// Once end is found, lexer will start to recognize tokens
+				isComment = false;
+
+				tokenPointer += 2;
+
+			}
+
 
 			/*
 			 *
