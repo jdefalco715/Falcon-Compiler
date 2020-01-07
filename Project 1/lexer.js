@@ -215,7 +215,7 @@ function lexer(source){
 			 		addToken("CHAR", "b", i + 1, tokenPointer + 1);
 
 			 		// Move pointer
-			 		tokenPointer += 2;
+			 		tokenPointer += 1;
 
 			 	}
 
@@ -230,9 +230,8 @@ function lexer(source){
 			 		// Add FALSE token
 			 		addToken("BOOLOP", "false", i + 1, tokenPointer + 1);
 
-			 		// Move starting pointer and end pointer
+			 		// Move pointer
 			 		tokenPointer += 5;
-			 		endTokenPointer = tokenPointer + 1;
 
 			 	} else {
 			 		// If the character is present and not part of the keyword, it must be char token
@@ -241,7 +240,7 @@ function lexer(source){
 			 		addToken("CHAR", "f", i + 1, tokenPointer + 1);
 
 			 		// Move pointer
-			 		tokenPointer += 2;
+			 		tokenPointer += 1;
 
 			 	}
 
@@ -266,7 +265,7 @@ function lexer(source){
 			 		addToken("CHAR", "t", i + 1, tokenPointer + 1);
 
 			 		// Move pointer
-			 		tokenPointer += 2;
+			 		tokenPointer += 1;
 
 			 	}
 
@@ -279,23 +278,18 @@ function lexer(source){
 			 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
 
 			 		// Add PRINT token
-			 		addToken("KEYWORD", "print", , tokenPointer);
+			 		addToken("KEYWORD", "print", i + 1, tokenPointer + 1);
 
-			 		// Move starting pointer and end pointer
+			 		// Move pointer
 			 		tokenPointer += 5;
-			 		endTokenPointer = tokenPointer + 1;
 
-			 	}
-
-			 	// Check to see if there is nothing following the character at pointer
-			 	if((line.charAt(tokenPointer + 1)).match(SPACE_r)) {
+			 	} else {
 
 			 		// Add CHAR token for letter 'p'
-			 		addToken("CHAR", "p", , tokenPointer);
+			 		addToken("CHAR", "p", i + 1, tokenPointer + 1);
 
-			 		// Move starting pointer and end pointer
-			 		tokenPointer += 2;
-			 		endTokenPointer = tokenPointer + 1;
+			 		// Move pointer
+			 		tokenPointer += 1;
 
 			 	}
 
@@ -320,18 +314,17 @@ function lexer(source){
 			   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
 
 			   		// Add EQUALS token
-			   		addToken("BOOLOP", "==", line, tokenPointer);
+			   		addToken("BOOLOP", "==", i + 1, tokenPointer + 1);
 
 			   		tokenPointer += 2;
-			   	}
-
-			   	// Be certain that character in question is ASSIGN token
-			   	if ((line.charAt(tokenPointer + 1)).match(SPACE_r)){
+			   	} else {
+			   		// If the character is not followed by another '=', it must be ASSIGN
 
 			   		// Add ASSIGN token
-			   		addToken("ASSIGN", "=", line, tokenPointer);
+			   		addToken("ASSIGN", "=", i + 1, tokenPointer + 1);
 
-
+			   		// Move pointer
+			   		tokenPointer += 1;
 			   	}
 			   }
 
