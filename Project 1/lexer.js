@@ -1,7 +1,9 @@
 // Lex file
 
 //Function takes input as parameter
-function lexer(source){
+function lexer(){
+	// Fetches source code from text box
+	var source = document.getElementById("sc").value;
 
 	// Array of tokens for parsing
 	var tokens = [];
@@ -60,25 +62,28 @@ function lexer(source){
 	// Comment End
 	var COM_END = /'\*\/$'/;
 
-	// Trim whitespace
-	source = trim(source);
+	// Clears the console log
+	document.getElementById("op").innerHTML = "";
 
 	// Check if the inputted entered is empty
-	if (/'^$'/.match(source)) {
+	if (source.match(/^$/)) {
 
 		// Output error that nothing was entered
-		Log( /*Error message here*/ );
+		document.getElementById("op").innerHTML +=  "ERROR LEXER --- No source code found \n";
 
 		// Stop lexing
 		return false;
 	}
+
+	// Trim whitespace
+	source = trim(source);
 
 	// Split input into lines
 	var lines = source.split("\n");
 
 	// Starting Lexer message
 	// Staring with program 1
-	Log(/*Lexer start message here*/);
+	document.getElementById("op").innerHTML +=  "INFO LEXER --- Start lexing program " + progNumber + "\n";
 
 	// Go through the input line by line with for loop
 	for (var i = 0; i < lines.length; i++) {
@@ -107,7 +112,7 @@ function lexer(source){
 				// Lexer will ignore and not add comments to token stream
 				// This loop moves the pointer until end of comment is found
 				while (!(line.substring(tokenPointer, tokenPointer + 1)).match(COM_END)) {
-					
+
 					tokenPointer++;
 
 					isComment = true;
@@ -676,7 +681,11 @@ function addToken(type, val, line, col) {
 }
 
 // Function added from 'Sonar' hall of fame program
-
 function Log(lineText) {
-	var lText = "<div class=\"lexer\"><span class=\"lexer-title\">LEXER</span> -- " + lineText + "</div>";
+	document.getElementById("op").innerHTML = "<div class=\"lexer\"><span class=\"lexer-title\">LEXER</span> -- " + lineText + "</div>";
+}
+
+
+function test() {
+	alert("Hello World!");
 }

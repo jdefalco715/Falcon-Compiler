@@ -9,18 +9,23 @@
 
 		<!-- link to css sheet -->
 		<link rel="stylesheet" type="text/css" href="style.css" />
+
+
+		
 	</head>
 
 	<body>
 		<h1 tag="Title">Welcome to the Falcon Compiler!</h1>
 
 		<p>Enter sample program or programs below in the text box, and hit the 'Compile' button to begin.</p><br>
-		
+
 		<!-- div containing source code / compile button -->
 		<div class="col1">
 			<h3>Input Source Code:</h3>
 			<textarea rows="15" cols="50" type="text" id="sc"></textarea><br>
-			<button type="button" name="start" onclick="compile();">Compile</button>
+			<script type="text/javascript" src="lexer.js"></script>
+			<button type="button" name="start" onclick="lexer();">Compile</button>
+
 		</div>
 
 		<!-- div containing output text area -->
@@ -28,11 +33,6 @@
 			<h3>Console Output:</h3>
 			<textarea rows="15" cols="50" type="text" name="output" id="op" disabled></textarea>
 		</div>
-	<script type="text/javascript">
-		function compile() {
-			document.getElementById("op").innerHTML = "LEXER --- TEST"
-			document.getElementById("op").innerHTML = "LEXER --- TEST TO SEE IF LINES WILL STAY"
-		}
-	</script>
+	
 	</body>
 </html>
