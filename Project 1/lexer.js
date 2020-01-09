@@ -56,9 +56,11 @@ function lexer(){
 
 		// Reset pointer for every line
 		tokenPointer = 0;
-
 		
-		while (tokenPointer < line.length) {
+		while (tokenPointer == line.length) {
+
+			outMessage("line length:" + line.length);
+			outMessage("pointer: " + tokenPointer);
 
 			var testChar = line[tokenPointer];
 
@@ -71,23 +73,24 @@ function lexer(){
 			 */	
 
 			// Check for comment start
-			if ((line.substring(tokenPointer, tokenPointer + 1)).match(COM_BEGIN)) {
+			if ((line.slice(tokenPointer, tokenPointer + 1)).match(COM_BEGIN)) {
 
 				tokenPointer += 2;
 
 				// Lexer will ignore and not add comments to token stream
 				// This loop moves the pointer until end of comment is found
-				while (!(line.substring(tokenPointer, tokenPointer + 1)).match(COM_END)) {
+				if (!(line.slice(tokenPointer, tokenPointer + 1)).match(COM_END)) {
 
 					tokenPointer++;
 
 					isComment = true;
-				}
+				} else {
 
 				// Once end is found, lexer will start to recognize tokens
 				isComment = false;
 
 				tokenPointer += 2;
+			}
 
 			}
 
@@ -105,7 +108,7 @@ function lexer(){
 				if (testChar == 'w') {
 
 				 	// Check to see if the following characters match the regex pattern for 'while' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(WHILE_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 5)).match(WHILE_r)) {
 
 				 		// Add WHILE token
 				 		addToken("WHILESTMT", "while", i + 1, tokenPointer + 1);
@@ -130,7 +133,7 @@ function lexer(){
 				if (testChar == 'i') {
 
 				 	// Check to see if the following character matches the regex pattern for 'if' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 2)).match(IF_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 2)).match(IF_r)) {
 
 				 		// Add IF token
 				 		addToken("IFSTMT", "if", i + 1, tokenPointer + 1);
@@ -138,7 +141,7 @@ function lexer(){
 				 		// Move pointer
 				 		tokenPointer += 2;
 
-				 	} else if ((line.substring(tokenPointer, tokenPointer + 3)).match(INT_r)) {
+				 	} else if ((line.slice(tokenPointer, tokenPointer + 3)).match(INT_r)) {
 				 		// Check to see if the following characters matches the regex pattern for 'int' keyword
 
 				 		// Add INT token
@@ -164,7 +167,7 @@ function lexer(){
 				if (testChar == 's') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'string' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 6)).match(STRING_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 6)).match(STRING_r)) {
 
 				 		// Add STRING token
 				 		addToken("V_TYPE", "string", i + 1, tokenPointer + 1);
@@ -189,7 +192,7 @@ function lexer(){
 				if (testChar == 'b') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'boolean' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 7)).match(BOOLEAN_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 7)).match(BOOLEAN_r)) {
 
 				 		// Add BOOLEAN token
 				 		addToken("V_TYPE", "boolean", i + 1, tokenPointer + 1);
@@ -214,7 +217,7 @@ function lexer(){
 				if (testChar == 'f') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'false' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(FALSE_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 5)).match(FALSE_r)) {
 
 				 		// Add FALSE token
 				 		addToken("BOOL_F", "false", i + 1, tokenPointer + 1);
@@ -239,7 +242,7 @@ function lexer(){
 				if (testChar == 't') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'true' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 4)).match(TRUE_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 4)).match(TRUE_r)) {
 
 				 		// Add TRUE token
 				 		addToken("BOOL_T", "true", i + 1, tokenPointer + 1);
@@ -264,7 +267,7 @@ function lexer(){
 				if (testChar == 'p') {
 
 				 	// Check to see if the following character matches the regex pattern for 'print' keyword
-				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
+				 	if ((line.slice(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
 
 				 		// Add PRINT token
 				 		addToken("PRINT", "print", i + 1, tokenPointer + 1);
@@ -316,7 +319,7 @@ function lexer(){
 			  	if(!isString) {
 
 			   	// Differentiate between assign and compare
-			   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
+			   	if ((line.slice(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
 
 			   		// Add ISEQUAL token
 			   		addToken("ISEQUAL", "==", i + 1, tokenPointer + 1);
@@ -352,7 +355,7 @@ function lexer(){
 			  	if(!isString) {
 
 			   	// See if the two characters match the regex pattern for not equals
-			   	if ((line.substring(tokenPointer, tokenPointer + 1)).match(NOT_EQUALS)) {
+			   	if ((line.slice(tokenPointer, tokenPointer + 1)).match(NOT_EQUALS)) {
 
 			   		// Add NOTEQUAL token
 			   		addToken("NOTEQUAUL", "!=", i + 1, tokenPointer + 1);
@@ -517,7 +520,7 @@ function lexer(){
 		   }
 
 		   // Check for EOP character
-		   if(testChar.match(EOP)) {
+		   if(testChar == "$") {
 
 		   	// Found outside of string
 		   	if (!isString) {
@@ -625,9 +628,6 @@ function lexer(){
 		   		tokenPointer++;
 		   	}
 		   }
-
-
-
 		}
 
 		// Check if the pointer has reached the last character in the source input
@@ -646,6 +646,9 @@ function lexer(){
 			// Add EOP to program
 			line = line + '$';
 		}
+		
+		outMessage("End of for");
+
 	}
 
 	return;
