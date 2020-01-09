@@ -513,54 +513,54 @@ function lexer(){
 			   	// Move pointer
 			   	tokenPointer++;
 			   }
-		   }
+		   	}
 
-		   // Check for EOP character
-		   if(testChar == "$") {
+		   	// Check for EOP character
+		   	if(testChar == "$") {
 
-		   	// Found outside of string
-		   	if (!isString) {
+		   		// Found outside of string
+		   		if (!isString) {
 
-		   		// Add EOP token
-			   	addToken("EOP", "$", i + 1, tokenPointer + 1);
+		   			// Add EOP token
+			   		addToken("EOP", "$", i + 1, tokenPointer + 1);
 
-		   		// If there were any errors, return nothing and display Lexer failed
-				if (error > 0) {
+		   			// If there were any errors, return nothing and display Lexer failed
+					if (error > 0) {
 
-					// Lexer failed message, including warning and error numbers
-					outMessage("ERROR   LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)");
+						// Lexer failed message, including warning and error numbers
+						outMessage("ERROR   LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)");
 
-					return false;
+						return false;
 
-				} else {
+					} else {
 
-					// Lexer succeeded message, including warning and error numbers
-					outMessage("INFO    LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
+						// Lexer succeeded message, including warning and error numbers
+						outMessage("INFO    LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
 
-					// Send token stream to parser
-					/* parse(tokens); */
+						// Send token stream to parser
+						/* parse(tokens); */
 
-				}
+					}
 
-				// Ensure not at end of program
-				if (i != lines.length && tokenPointer < line.length) {
+					// Ensure not at end of program
+					if (i != lines.length && line[tokenPointer + 1] != undefined)  {
+						// Reset values for token stream, warning counter, and error counter
+						tokens =[];
+						warning = 0;
+						error = 0;
 
-					// Reset values for token stream, warning counter, and error counter
-					tokens =[];
-					warning = 0;
-					error = 0;
+						// Increase program number
+						progNumber++;
 
-					// Increase program number
-					progNumber++;
-
-					// Message announcing lexing next program
-					outMessage( "INFO    LEXER --- Start lexing program " + progNumber);
+						// Message announcing lexing next program
+						outMessage( "INFO    LEXER --- Start lexing program " + progNumber);
+					}
 
 					// Move pointer
 					tokenPointer++;
-				}
-		   	}
-		   }
+		    	}
+
+			}
 
 		   // Check for whitspace character
 		   if(testChar == ' ') {
