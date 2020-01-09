@@ -10,7 +10,10 @@
 		<!-- link to css sheet -->
 		<link rel="stylesheet" type="text/css" href="style.css" />
 
-
+		<!-- link to script files -->
+		<script type="text/javascript" src="lexer.js"></script>
+		<script type="text/javascript" src="token.js"></script>
+		<script type="text/javascript" src="util.js"></script>
 		
 	</head>
 
@@ -23,7 +26,6 @@
 		<div class="col1">
 			<h3>Input Source Code:</h3>
 			<textarea rows="15" cols="50" type="text" id="sc"></textarea><br>
-			<script type="text/javascript" src="lexer.js"></script>
 			<button type="button" name="start" onclick="lexer();">Compile</button>
 
 		</div>
@@ -31,8 +33,7 @@
 		<!-- div containing output text area -->
 		<div class="col2">
 			<h3>Console Output:</h3>
-			<textarea rows="15" cols="50" type="text" name="output" id="op" disabled></textarea>
-		</div>
-	
+			<textarea rows="15" cols="50" type="text" name="output" id="op" readonly></textarea>
+		</div>	
 	</body>
 </html>

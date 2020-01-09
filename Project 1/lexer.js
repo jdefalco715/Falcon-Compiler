@@ -5,6 +5,9 @@ function lexer(){
 	// Fetches source code from text box
 	var source = document.getElementById("sc").value;
 
+	// Trim whitespace
+	source = trim(source);
+
 	// Array of tokens for parsing
 	var tokens = [];
 
@@ -26,50 +29,14 @@ function lexer(){
 	// Number of program currently lexing 
 	var progNumber = 1;
 
-	// Defining tokens from the class grammar
-	// Print (lowercase r for regex)
-	var PRINT_r = /print$/; 
-	// While
-	var WHILE_r = /while$/;
-	// If
-	var IF_r = /if$/;
-	// Quotation mark
-	var QUOTE_r = /"$/; 
-	// Int
-	var INT_r = /int$/;
-	// String
-	var STRING_r = /string$/;
-	// Boolean
-	var BOOLEAN_r = /boolean$/;
-	// True
-	var TRUE_r = /true$/;
-	// False
-	var FALSE_r = /false$/;
-	// Char 
-	var CHAR_r = /[a-z]$/;
-	// Space
-	var SPACE_r = /\s$/;
-	// Digit
-	var DIGIT_r = /[0-9]+$/;
-	// Equals Boolean Op
-	var EQUALS_r = /\=\=$/;
-	// Not Equals Boolean Op
-	var NOT_EQUALS = /\!\=$/;
-	// Assign Operator
-	var ASSIGN_r = /\=$/;
-	// Comment Beginning 
-	var COM_BEGIN = /\/\*$/;
-	// Comment End
-	var COM_END = /\*\/$/;
-
 	// Clears the console log
-	document.getElementById("op").innerHTML = "";
+	document.getElementById("op").value = "";
 
 	// Check if the inputted entered is empty
 	if (source.match(/^$/)) {
 
 		// Output error that nothing was entered
-		document.getElementById("op").innerHTML += "ERROR  LEXER --- No source code found \n";
+		document.getElementById("op").value += "ERROR  LEXER --- No source code found \n";
 
 		// Stop lexing
 		return false;
@@ -77,18 +44,15 @@ function lexer(){
 
 	// Starting Lexer message
 	// Staring with program 1
-	document.getElementById("op").innerHTML +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
-	document.getElementById("op").innerHTML +=  "here 0 \n";
+	document.getElementById("op").value +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
 
-	// Trim whitespace
-	source = trim(source);
 
-	document.getElementById("op").innerHTML +=  "here 1 \n";
+	document.getElementById("op").value +=  "here 1 \n";
 
 	// Split input into lines
 	var lines = source.split("\n");
 
-	document.getElementById("op").innerHTML +=  "here 2 \n";	
+	document.getElementById("op").value +=  "here 2 \n";	
 
 	// Go through the input line by line with for loop
 	for (var i = 0; i < lines.length; i++) {
@@ -100,6 +64,9 @@ function lexer(){
 
 		
 		while (tokenPointer < line.length) {
+
+			var testChar = line[tokenPointer];
+
 			/*   TOKEN HEIRARCHY:
 			 *   - KEYWORDS
 			 *   - ID
@@ -140,7 +107,7 @@ function lexer(){
 		   while (!isString) {
 
 				// Check if the character at the pointer is equal to w 
-				if (line.charAt(tokenPointer) == 'w') {
+				if (testChar == 'w') {
 
 				 	// Check to see if the following characters match the regex pattern for 'while' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(WHILE_r)) {
@@ -165,7 +132,7 @@ function lexer(){
 				}
 
 				// Check if the character at the pointer is equal to i 
-				if (line.charAt(tokenPointer) == 'i') {
+				if (testChar == 'i') {
 
 				 	// Check to see if the following character matches the regex pattern for 'if' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 2)).match(IF_r)) {
@@ -199,7 +166,7 @@ function lexer(){
 				}
 
 				// Check if the character at the pointer is equal to s
-				if (line.charAt(tokenPointer) == 's') {
+				if (testChar == 's') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'string' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 6)).match(STRING_r)) {
@@ -224,7 +191,7 @@ function lexer(){
 				}
 
 				// Check if the character at the pointer is equal to b
-				if (line.charAt(tokenPointer) == 'b') {
+				if (testChar == 'b') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'boolean' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 7)).match(BOOLEAN_r)) {
@@ -249,7 +216,7 @@ function lexer(){
 				}
 
 				// Check if the character at the pointer is equal to f
-				if (line.charAt(tokenPointer) == 'f') {
+				if (testChar == 'f') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'false' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(FALSE_r)) {
@@ -274,7 +241,7 @@ function lexer(){
 				}
 
 				// Check if the character at the pointer is equal to t
-				if (line.charAt(tokenPointer) == 't') {
+				if (testChar == 't') {
 
 				 	// Check to see if the following characters matches the regex pattern for 'true' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 4)).match(TRUE_r)) {
@@ -299,7 +266,7 @@ function lexer(){
 				}
 
 				// Check if the character at the pointer is equal to p
-				if (line.charAt(tokenPointer) == 'p') {
+				if (testChar == 'p') {
 
 				 	// Check to see if the following character matches the regex pattern for 'print' keyword
 				 	if ((line.substring(tokenPointer, tokenPointer + 5)).match(PRINT_r)) {
@@ -331,7 +298,7 @@ function lexer(){
 			 */
 
 			// Check for quotation symbol
-			if ((line.charAt(tokenPointer)).match(QUOTE_r)) {
+			if ((testChar).match(QUOTE_r)) {
 
 			   // Add QUOTE token
 			   addToken("QUOTE", "\"", i + 1, tokenPointer + 1);
@@ -348,7 +315,7 @@ function lexer(){
 			}
 
 			// Check to see if the character matches the regex pattern for the assign token
-			if ((line.charAt(tokenPointer)).match(ASSIGN_r)){
+			if ((testChar).match(ASSIGN_r)){
 
 			 	// Check if in string, if not all good
 			  	if(!isString) {
@@ -374,7 +341,7 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-				  	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 	
 			   	// Add to error counter
 			   	error++;
@@ -385,7 +352,7 @@ function lexer(){
 			}
 
 			// Check if the character is exclamation point
-			if ((line.charAt(tokenPointer)) == "!") {
+			if ((testChar) == "!") {
 				// Check if in string, if not all good
 			  	if(!isString) {
 
@@ -401,7 +368,7 @@ function lexer(){
 
 				  		// Exclamation point by itself not valid in language
 				  		// throws error
-				  		document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  		document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				  		// Add to error counter
 				  		error++;
@@ -414,7 +381,7 @@ function lexer(){
 
 				   // symbol not valid in string
 				   // throws error
-				   document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				   document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				   // Add to error counter
 				   error++;
@@ -425,7 +392,7 @@ function lexer(){
 			}
 
 			// Check if character matches plus symbol
-			if((line.charAt(tokenPointer)) == '+') {
+			if((testChar) == '+') {
 					
 				// Check if in string, if not all good
 			  	if(!isString) {
@@ -440,7 +407,7 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
@@ -451,7 +418,7 @@ function lexer(){
 			}
 
 			// Check for left paren
-			if((line.charAt(tokenPointer)) == '(') {
+			if((testChar) == '(') {
 					
 				// Check if in string, if not all good
 			   if(!isString) {
@@ -466,7 +433,7 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-				  	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				  	// Add to error counter
 				  	error++;
@@ -477,7 +444,7 @@ function lexer(){
 			}
 
 			// Check for right paren
-			if((line.charAt(tokenPointer)) == ')') {
+			if((testChar) == ')') {
 					
 				// Check if in string, if not all good
 			   if(!isString) {
@@ -492,7 +459,7 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-				  	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				  	// Add to error counter
 				  	error++;
@@ -503,7 +470,7 @@ function lexer(){
 			}
 
 			// Check for left brace
-			if((line.charAt(tokenPointer)) == '{') {
+			if((testChar) == '{') {
 					
 				// Check if in string, if not all good
 			  	if(!isString) {
@@ -518,7 +485,7 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
@@ -529,7 +496,7 @@ function lexer(){
 			}
 
 			// Check for right brace
-			if((line.charAt(tokenPointer)) == '}') {
+			if((testChar) == '}') {
 					
 				// Check if in string, if not all good
 			  	if(!isString) {
@@ -544,7 +511,7 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
@@ -555,7 +522,7 @@ function lexer(){
 		   }
 
 		   // Check for EOP character
-		   if((line.charAt(tokenPointer)).match(EOP)) {
+		   if(testChar.match(EOP)) {
 
 		   	// Found outside of string
 		   	if (!isString) {
@@ -564,14 +531,14 @@ function lexer(){
 					if (error > 0) {
 
 						// Lexer failed message, including warning and error numbers
-						document.getElementById("op").innerHTML += "ERROR  LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)\n";
+						document.getElementById("op").value += "ERROR  LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)\n";
 
 						return false;
 
 					} else {
 
 						// Lexer succeeded message, including warning and error numbers
-						document.getElementById("op").innerHTML += "INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)\n";
+						document.getElementById("op").value += "INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)\n";
 
 						// Send token stream to parser
 						/* parse(tokens); */
@@ -590,7 +557,7 @@ function lexer(){
 						progNumber++;
 
 						// Message announcing lexing next program
-						document.getElementById("op").innerHTML +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
+						document.getElementById("op").value +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
 
 						// Move pointer
 						tokenPointer++;
@@ -599,7 +566,7 @@ function lexer(){
 		   }
 
 		   // Check for whitspace character
-		   if((line.charAt(tokenPointer)) == ' ') {
+		   if(testChar == ' ') {
 
 		   	// Ignore and move pointer
 		   	tokenPointer++;
@@ -613,11 +580,11 @@ function lexer(){
 		    */
 
 		   // Check if the character in question matches any digit 0-9
-		   if ((line.charAt(tokenPointer)).match(DIGIT_r)) {
+		   if (testChar.match(DIGIT_r)) {
 
 		   	if(!isString) {
 			   	// Add DIGIT token
-			   	addToken("DIGIT", line.charAt(tokenPointer), i + 1, tokenPointer + 1);
+			   	addToken("DIGIT", testChar, i + 1, tokenPointer + 1);
 
 			   	// Move pointer
 			   	tokenPointer++;
@@ -625,7 +592,7 @@ function lexer(){
 
 			   	// Digit not accepted in string in grammar
 			   	// Throw error
-			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 			   	// Add to error counter
 			   	error++;
@@ -643,13 +610,13 @@ function lexer(){
 		    */
 
 		   // See if character matches CHAR/ID regex
-		   if ((line.charAt(tokenPointer)).match(CHAR_r)) {
+		   if (testChar.match(CHAR_r)) {
 
 		   	// If not in string
 		   	if (!isString) {
 
 		   		// Add ID token
-		   		addToken("ID", line.charAt(tokenPointer), i + 1, tokenPointer + 1);
+		   		addToken("ID", testChar, i + 1, tokenPointer + 1);
 
 		   		// Move pointer
 		   		tokenPointer++;
@@ -657,7 +624,7 @@ function lexer(){
 		   		// If in string
 
 		   		// Add CHAR token
-		   		addToken("CHAR", line.charAt(tokenPointer), i + 1, tokenPointer + 1);
+		   		addToken("CHAR", testChar, i + 1, tokenPointer + 1);
 
 		   		// Move pointer
 		   		tokenPointer++;
@@ -670,10 +637,10 @@ function lexer(){
 
 		// Check if the pointer has reached the last character in the source input
 		// If this character is not equal to EOP, give warning and place EOP
-		if (i == lines.length - 1 && line.charAt(line.length-1) != '$'){
+		if (i == lines.length - 1 && line[line.length - 1] != '$'){
 
 			// Warning message
-			document.getElementById("op").innerHTML += "WARNING	LEXER --- No EOP found at end of file. Adding one for you.";
+			outMessage("WARNING	LEXER --- No EOP found at end of file. Adding one for you.");
 
 			// Add to warning counter
 			warning++;
@@ -701,5 +668,5 @@ function addToken(type, val, line, col) {
 	tokens.push(temp);
 
 	// Outputs token to log
-	document.getElementById("op").innerHTML += "DEBUG	LEXER --- " + type + " [ " + val + " ] token found at (" + line + ":" + col +") \n";
+	outMessage("DEBUG	LEXER --- " + type + " [ " + val + " ] token found at (" + line + ":" + col +")");
 }
