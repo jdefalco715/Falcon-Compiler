@@ -41,7 +41,7 @@
  * Parameter line defines the line that the token was found
  * Parameter column defines position of first char of token
  */
-var Token(type, kind, line, column) {
+function Token(type, kind, line, column) {
 	this.type = type;
 	this.kind = kind;
 	this.line = line;
