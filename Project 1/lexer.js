@@ -28,39 +28,39 @@ function lexer(){
 
 	// Defining tokens from the class grammar
 	// Print (lowercase r for regex)
-	var PRINT_r = /'print$'/; 
+	var PRINT_r = /print$/; 
 	// While
-	var WHILE_r = /'while$'/;
+	var WHILE_r = /while$/;
 	// If
-	var IF_r = /'if$'/;
+	var IF_r = /if$/;
 	// Quotation mark
-	var QUOTE_r = /'"$'/; 
+	var QUOTE_r = /"$/; 
 	// Int
-	var INT_r = /'int$'/;
+	var INT_r = /int$/;
 	// String
-	var STRING_r = /'string$'/;
+	var STRING_r = /string$/;
 	// Boolean
-	var BOOLEAN_r = /'boolean$'/;
+	var BOOLEAN_r = /boolean$/;
 	// True
-	var TRUE_r = /'true$'/;
+	var TRUE_r = /true$/;
 	// False
-	var FALSE_r = /'false$'/;
+	var FALSE_r = /false$/;
 	// Char 
-	var CHAR_r = /'[a-z]$'/;
+	var CHAR_r = /[a-z]$/;
 	// Space
-	var SPACE_r = /'\s$'/;
+	var SPACE_r = /\s$/;
 	// Digit
-	var DIGIT_r = /'[0-9]+$'/;
+	var DIGIT_r = /[0-9]+$/;
 	// Equals Boolean Op
-	var EQUALS_r = /'\=\=$'/;
+	var EQUALS_r = /\=\=$/;
 	// Not Equals Boolean Op
-	var NOT_EQUALS = /'\!\=$'/;
+	var NOT_EQUALS = /\!\=$/;
 	// Assign Operator
-	var ASSIGN_r = /'\=$'/;
+	var ASSIGN_r = /\=$/;
 	// Comment Beginning 
-	var COM_BEGIN = /'\/\*$'/;
+	var COM_BEGIN = /\/\*$/;
 	// Comment End
-	var COM_END = /'\*\/$'/;
+	var COM_END = /\*\/$/;
 
 	// Clears the console log
 	document.getElementById("op").innerHTML = "";
@@ -69,30 +69,34 @@ function lexer(){
 	if (source.match(/^$/)) {
 
 		// Output error that nothing was entered
-		document.getElementById("op").innerHTML +=  "ERROR LEXER --- No source code found \n";
+		document.getElementById("op").innerHTML += "ERROR  LEXER --- No source code found \n";
 
 		// Stop lexing
 		return false;
 	}
 
+	// Starting Lexer message
+	// Staring with program 1
+	document.getElementById("op").innerHTML +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
+	document.getElementById("op").innerHTML +=  "here 0 \n";
+
 	// Trim whitespace
 	source = trim(source);
+
+	document.getElementById("op").innerHTML +=  "here 1 \n";
 
 	// Split input into lines
 	var lines = source.split("\n");
 
-	// Starting Lexer message
-	// Staring with program 1
-	document.getElementById("op").innerHTML +=  "INFO LEXER --- Start lexing program " + progNumber + "\n";
+	document.getElementById("op").innerHTML +=  "here 2 \n";	
 
 	// Go through the input line by line with for loop
 	for (var i = 0; i < lines.length; i++) {
 		// Current row
 		var line = lines[i];
 
-		// Reset pointer and end pointer for every line
+		// Reset pointer for every line
 		tokenPointer = 0;
-		endTokenPointer = 1;
 
 		
 		while (tokenPointer < line.length) {
@@ -338,6 +342,9 @@ function lexer(){
 			   else // If in string, end it
 			   	isString = false;
 
+			   // Move pointer
+			   tokenPointer++;
+
 			}
 
 			// Check to see if the character matches the regex pattern for the assign token
@@ -367,12 +374,13 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-
-				  	Log(/*Error message here*/);
+				  	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 	
 			   	// Add to error counter
 			   	error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 			   }
 			}
 
@@ -390,24 +398,29 @@ function lexer(){
 			   		// Move pointer
 			   		tokenPointer += 2;
 			   	} else {
+
 				  		// Exclamation point by itself not valid in language
 				  		// throws error
+				  		document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
-				  		Log(/*Error message here*/);
-
+				  		// Add to error counter
 				  		error++;
+
+			   		// Move pointer
+			   		tokenPointer++;
 				  	}
 
 				} else {
 
 				   // symbol not valid in string
 				   // throws error
-
-				   Log(/*Error message here*/);
+				   document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				   // Add to error counter
 				   error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 				}
 			}
 
@@ -427,12 +440,13 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-
-			   	Log(/*Error message here*/);
+			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 			   }
 			}
 
@@ -452,12 +466,13 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-
-				  	Log(/*Error message here*/);
+				  	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				  	// Add to error counter
 				  	error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 				}
 			}
 
@@ -477,12 +492,13 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-
-				  	Log(/*Error message here*/);
+				  	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 				  	// Add to error counter
 				  	error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 				}
 			}
 
@@ -502,12 +518,13 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-
-			   	Log(/*Error message here*/);
+			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 			   }
 			}
 
@@ -527,12 +544,13 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-
-			   	Log(/*Error message here*/);
+			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
 
+			   	// Move pointer
+			   	tokenPointer++;
 			   }
 		   }
 
@@ -546,14 +564,14 @@ function lexer(){
 					if (error > 0) {
 
 						// Lexer failed message, including warning and error numbers
-						Log(/*Lexer failed message here*/);
+						document.getElementById("op").innerHTML += "ERROR  LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)\n";
 
 						return false;
 
 					} else {
 
 						// Lexer succeeded message, including warning and error numbers
-						Log(/*Lexer success*/);
+						document.getElementById("op").innerHTML += "INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)\n";
 
 						// Send token stream to parser
 						/* parse(tokens); */
@@ -572,7 +590,7 @@ function lexer(){
 						progNumber++;
 
 						// Message announcing lexing next program
-						Log(/*Lexing program #...*/);
+						document.getElementById("op").innerHTML +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
 
 						// Move pointer
 						tokenPointer++;
@@ -604,13 +622,16 @@ function lexer(){
 			   	// Move pointer
 			   	tokenPointer++;
 			   } else {
+
 			   	// Digit not accepted in string in grammar
 			   	// Throw error
-
-			   	Log(/*Error message here*/);
+			   	document.getElementById("op").innerHTML += "ERROR  LEXER --- Nonvalid token [ " + line.charAt(tokenPointer) + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
 
 			   	// Add to error counter
 			   	error++;
+
+			   	// Move pointer
+			   	tokenPointer++;
 			   }
 
 		   }
@@ -652,7 +673,7 @@ function lexer(){
 		if (i == lines.length - 1 && line.charAt(line.length-1) != '$'){
 
 			// Warning message
-			Log( /*Warning message*/);
+			document.getElementById("op").innerHTML += "WARNING	LEXER --- No EOP found at end of file. Adding one for you.";
 
 			// Add to warning counter
 			warning++;
@@ -664,28 +685,21 @@ function lexer(){
 			line = line + '$';
 		}
 	}
+
+	return;
 }
 
 
 // Function added from 'Sonar' hall of fame program
 
 function addToken(type, val, line, col) {
-	//Sets temp token
+
+	// Sets temp token
 	var temp = new Token(type, val, line, col);
-	//Addes to the token list
+
+	// Adds to the token list
 	tokens.push(temp);
-	//sets the text
-	var text = type + " [ <span class=\"code-words\">" + val + "</span> ] found on line <span class=\"line\">" + line + "</span>, <span class=\"line\">" + col + "</span>...";
-	//Outputs new token to log
-	Log(text);
-}
 
-// Function added from 'Sonar' hall of fame program
-function Log(lineText) {
-	document.getElementById("op").innerHTML = "<div class=\"lexer\"><span class=\"lexer-title\">LEXER</span> -- " + lineText + "</div>";
-}
-
-
-function test() {
-	alert("Hello World!");
+	// Outputs token to log
+	document.getElementById("op").innerHTML += "DEBUG	LEXER --- " + type + " [ " + val + " ] token found at (" + line + ":" + col +") \n";
 }
