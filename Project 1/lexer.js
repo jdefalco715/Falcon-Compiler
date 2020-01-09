@@ -36,7 +36,7 @@ function lexer(){
 	if (source.match(/^$/)) {
 
 		// Output error that nothing was entered
-		document.getElementById("op").value += "ERROR  LEXER --- No source code found \n";
+		outMessage("ERROR  LEXER --- No source code found");
 
 		// Stop lexing
 		return false;
@@ -44,15 +44,10 @@ function lexer(){
 
 	// Starting Lexer message
 	// Staring with program 1
-	document.getElementById("op").value +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
-
-
-	document.getElementById("op").value +=  "here 1 \n";
+	outMessage("INFO   LEXER --- Start lexing program " + progNumber);
 
 	// Split input into lines
 	var lines = source.split("\n");
-
-	document.getElementById("op").value +=  "here 2 \n";	
 
 	// Go through the input line by line with for loop
 	for (var i = 0; i < lines.length; i++) {
@@ -341,7 +336,7 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-				  	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 	
 			   	// Add to error counter
 			   	error++;
@@ -368,7 +363,7 @@ function lexer(){
 
 				  		// Exclamation point by itself not valid in language
 				  		// throws error
-				  		document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  		outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 				  		// Add to error counter
 				  		error++;
@@ -381,7 +376,7 @@ function lexer(){
 
 				   // symbol not valid in string
 				   // throws error
-				   document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				   outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 				   // Add to error counter
 				   error++;
@@ -407,7 +402,7 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-			   	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 			   	// Add to error counter
 			   	error++;
@@ -433,7 +428,7 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-				  	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 				  	// Add to error counter
 				  	error++;
@@ -459,7 +454,7 @@ function lexer(){
 
 				  	// symbol not valid in string
 				  	// throws error
-				  	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+				  	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 				  	// Add to error counter
 				  	error++;
@@ -485,7 +480,7 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-			   	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 			   	// Add to error counter
 			   	error++;
@@ -511,7 +506,7 @@ function lexer(){
 
 			   	// symbol not valid in string
 			   	// throws error
-			   	document.getElementById("op").value += "ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1) + "\n";
+			   	outMessage("ERROR  LEXER --- Nonvalid token [ " + testChar + " ] found at (" + (i+1) + ":" + (tokenPointer+1));
 
 			   	// Add to error counter
 			   	error++;
@@ -531,14 +526,14 @@ function lexer(){
 					if (error > 0) {
 
 						// Lexer failed message, including warning and error numbers
-						document.getElementById("op").value += "ERROR  LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)\n";
+						outMessage("ERROR  LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)");
 
 						return false;
 
 					} else {
 
 						// Lexer succeeded message, including warning and error numbers
-						document.getElementById("op").value += "INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)\n";
+						outMessage("INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
 
 						// Send token stream to parser
 						/* parse(tokens); */
@@ -557,7 +552,7 @@ function lexer(){
 						progNumber++;
 
 						// Message announcing lexing next program
-						document.getElementById("op").value +=  "INFO   LEXER --- Start lexing program " + progNumber + "\n";
+						outMessage( "INFO   LEXER --- Start lexing program " + progNumber);
 
 						// Move pointer
 						tokenPointer++;
