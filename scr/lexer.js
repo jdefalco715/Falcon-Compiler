@@ -633,7 +633,6 @@ function lexer(){
 						// Lexer failed message, including warning and error numbers
 						outMessage("ERROR   LEXER --- Lexer failed with " + error + " error(s) and " + warning + " warning(s)");
 
-						return false;
 
 					} else {
 
