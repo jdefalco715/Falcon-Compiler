@@ -1,0 +1,22 @@
+Lexer test results
+
+After writing the lexer and ensuring the javascript worked with the html file, I cam across a number of bugs. 
+They are as follows:
+    -> $ - not printing/entering token stream unless forgotten at the end of file
+    -> $ - after found at end of file and  printing lexer success, the console would still print 'Start lexing program # ...'
+    -> keywords - if the first character of a keyword was found as an ID, the token after it would always be printed as the ID again
+    -> comments - did not work, froze the page
+    -> Multi-line multi-program inputs - if a $ was found at the end of a line, it would not continue to scan the rest of the input
+    -> Unrecognized token - if a character not defined by the grammar was found, the page and lexer would freeze due to infinite loop
+    -> Multi-program input - if one program failed, lexer would not scan the rest of input following it
+    
+Most of these issues had simple solutions, and most of those solutions involved the pointer going through each character in a line.
+I had place the pointer incrementation in a place were it would either be not executed at the correct position, or caused the lexer to 
+continue to scan without restarting the while loop to go through each character. This is also where I started to include the continue
+function, to ensure that once the scanner found a token, the pointer would increment and the while loop would start scanner at where the
+new pointer was located. 
+
+For other bugs, I found that issues arised from me placing code that would have to be implemented with a functioning parser in tact, which
+is not where I am yet. Removing this line (specifically with the multi-program input, a return case in a failed lex) ensured the problem 
+when away for now, but when I am finished with the parser I am sure that I will eed to enter that again. For now, the lexer works on its
+own, and after the parser is complete they will work together. 
