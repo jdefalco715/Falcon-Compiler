@@ -52,3 +52,7 @@ button.compile:active {
 	position:relative;
 	top:1px;
 }
+
+button.compile:focus {
+	outline: none;
+}
