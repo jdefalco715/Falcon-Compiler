@@ -15,7 +15,7 @@ function parse(tkns) {
 	outMessage("INFO    PARSER -- Parsing program " + progNumber);
 	
 	// Start with program
-	program();
+	// program();
 
 }
 
