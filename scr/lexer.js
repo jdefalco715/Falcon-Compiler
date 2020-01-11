@@ -800,7 +800,7 @@ function lexer(){
 				outMessage("INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
 
 				// Send token stream to parser
-				/* parse(tokens); */
+				parse(tokens, progNumber);
 
 			}
 
