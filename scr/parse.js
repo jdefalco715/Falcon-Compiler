@@ -1,6 +1,6 @@
 // Takes token stream, validates tokens to class grammar
 
-function parse(tkns) {
+function parse(tkns, progNumber) {
 
 	// Need to handle braces for levels of CST
 	var scopeLvl = 0;
@@ -11,6 +11,9 @@ function parse(tkns) {
 	// Define a new CST object 
 	var cst = new Tree();
 
+	// Break in output
+	outMessage("");
+	
 	// Output prasing programing #
 	outMessage("INFO    PARSER -- Parsing program " + progNumber);
 	
