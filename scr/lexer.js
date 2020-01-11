@@ -378,7 +378,7 @@ function lexer(){
 			  	if(!isString) {
 
 			   		// Differentiate between assign and compare
-			   		if ((line.slice(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
+			   		if ((line.slice(tokenPointer, tokenPointer + 2)).match(EQUALS_r)) {
 
 			   			// Add ISEQUAL token
 			   			addToken("ISEQUAL", "==", i + 1, tokenPointer + 1);
@@ -429,7 +429,7 @@ function lexer(){
 			  	if(!isString) {
 
 			   		// See if the two characters match the regex pattern for not equals
-			   		if ((line.slice(tokenPointer, tokenPointer + 1)).match(NOT_EQUALS)) {
+			   		if ((line.slice(tokenPointer, tokenPointer + 2)).match(NOT_EQUALS)) {
 
 			   			// Add NOTEQUAL token
 			   			addToken("NOTEQUAUL", "!=", i + 1, tokenPointer + 1);

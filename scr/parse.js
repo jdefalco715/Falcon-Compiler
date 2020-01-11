@@ -13,7 +13,7 @@ function parse(tkns, progNumber) {
 
 	// Break in output
 	outMessage("");
-	
+
 	// Output prasing programing #
 	outMessage("INFO    PARSER -- Parsing program " + progNumber);
 	
@@ -26,13 +26,19 @@ function program() {
 	// Goes to block
 	block();
 
+	// Looks for EOP
 }
 
 function block() {
 	// Finds a brace, goes to statement list
 	// If no brace, then error
 
+	// Looks for left brace
+
+	// Looks for stmtList
 	stmtList();
+
+	// Looks for right brace
 
 }
 
