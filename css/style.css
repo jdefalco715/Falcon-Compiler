@@ -1,0 +1,13 @@
+div.col1 {
+	float: left;
+	margin-right: 50px;
+}
+div.col2 {
+	float: left;
+	margin-left: 50px;
+}
+
+body {
+background: rgb(182,217,217);
+background: linear-gradient(0deg, rgba(182,217,217,1) 0%, rgba(27,126,215,1) 100%);
+}

@@ -1,0 +1,22 @@
+1. {}$
+
+2. {{{{}}}}$
+
+3. {int}{string}{boolean}$
+
+4. bool int a = 4$
+
+5. {/*ignore*/}$
+
+6. *empty*
+
+7.	{}$
+	{{{{{{}}}}}}}$
+	{{{{{{}}} /* comments are ignored */ }}}}$
+	{ /* comments are still ignored */ int @} $
+	{
+	 int a
+	 a = a
+	 string b
+	 a = b
+	}$
