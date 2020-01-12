@@ -1,14 +1,14 @@
 // Parser file
 // Takes token stream, validates tokens to class grammar
 // Function for (almost) every rule in grammar
-
+	var pErrors = 0;
 function parse(tkns, progNumber) {
   console.log("parse")
 	// Need to handle braces for levels of CST
 	var scopeLvl = 0;
 
 	// Parse errors - defined by unexpected token in grammar rule
-	var pErrors = 0;
+
 
 	// New array to edit through parser, so orignial stream of tokens remains intact
 	var stream = tkns;
@@ -16,7 +16,7 @@ function parse(tkns, progNumber) {
 	// Define a new CST object
 	var cst = new Tree();
 
-	// Break in line 
+	// Break in line
 	outMessage("");
 
 	// Output prasing programing #
@@ -33,12 +33,39 @@ function program(stream) {
 	outMessage("PARSER -- Found [Program]");
 
 	// Goes to block
-	block(tkns);
+	block(stream);
+
+	if(stream[0].type == "EOP") {
+
+		// Output token found
+		outMessage("PARSER -- Found [EOP]");
+
+		if (pErrors == 0) {
+
+			// Output parser success
+			outMessage("INFO - PARSING SUCCESS! Parsing succeeded with " + pErrors + " errors.");
+
+			// Display CST
+
+			// Move to semantic analysis
+			// Not sure yet if using CST or token stream for anaylsis
+		} else {
+
+			// Output parser failed
+			outMessage("INFO -- PARSER FAILED! Parsing failed with " + pErrors + " errors.");
+
+			// Do NOT display CST
+
+			// Do NOT move to semantic analysis
+
+		}
+	}
 }
 
 function block(stream) {
 	// Finds a brace, goes to statement list
 	// If no brace, then error
+
 	if(stream[0].type == "L_BRACE"){
 
 		// Output token found
@@ -52,163 +79,164 @@ function block(stream) {
 	} else {
 
 		// Print error
-		outMessage("PARSER ERROR!-- Unexpected token [" + stream[0].kind +"] found where left brace was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_BRACE [{] was expected");
 
 		// Add to errors
 		pErrors++;
 	}
 
 	if(stream[0].type == "R_BRACE"){
+
+		// Output token found
+		outMessage("PARSER -- Found [R_BRACE]");
+
+		// Remove from array
+		stream.shift();
+
     	return;
 	}
 }
 
 function stmtList(stream) {
 	console.log("stmtList")
+	console.log(stream[0].type)
 	// finds a statment
 	// If not, no error. Statement list can accept empty string. Find brace.
-  	console.log(tkns[curToke].type)
 
-	switch(tkns[curToke].type){
+	switch(stream[0].type){
   		case "PRINT": //print
-	  		printStmt(stream);
+      		stream.shift();
+			printStmt(stream);
 			break;
 		case "ASSIGN": //assignment
+		    stream.shift();
 	  		assignStmt(stream);
 	  		break;
 		case "IFSTMT": //if
+		    stream.shift();
   			ifStmt(stream);
 	  		break;
   		case "V_TYPE": //varDecl
-	  		varDecl(stream);
+        	stream.shift();
+			varDecl(stream);
 	  		break;
 		case "WHILESTMT": //while
-	  		whileStmt(stream);
+        	stream.shift();
+			whileStmt(stream);
 	  		break;
 		case "L_BRACE": //block
-	  		block(stream);
+        	stream.shift();
+			block(stream);
 	  		break;
-	default:
-    break;
-  }
+		default:
+    		break;
+	}
+
+	return;
 
 	// finds print, assign, var, while, or if statement, or block (brace)
 	// If not, then error
 
-
-
-
-
-
 }
 
 function printStmt(stream) {
-	var printStr = "";
+	console.log("Print")
 	// finds print keyword, then parenthesis, then expression
 	// If not, then error
-	if(tkns[0].type == "QUOTE") {
-		// Print found token
-		outMessage("PARSER -- Found [QUOTE]");
+	outMessage("INFO    PARSER -- PRINT " + expr(stream));
 
-		// Get rid of element
-		stream.shift();
 
-	  	while(tkns[0].type != "QUOTE") {
-      		printStr += tkns[curToke].kind;
-			curToke++
-		}
-	}
-	outMessage("INFO    PARSER -- PRINT " + printStr);
-
-	return;
 }
 
-function assignStmt(tkns) {
-	curToke++;
+function assignStmt(stream) {
+
 	console.log("assignStmt")
 	// finds ID, then assign, then expression
 	// If not, then error
 
-	expr(tkns);
+	expr(stream);
 }
 
-function varDecl(tkns) {
-	curToke++;
-	if(tkns[curToke].type == "ID") {
-		IDs[numIDs] = tkns[curToke].kind;
-	}
-	numIDs++;
-	console.log(IDs)
+function varDecl(stream) {
+
 	// finds type, then ID
 	// If not, then error
 
 }
 
-function whileStmt(tkns) {
-	curToke++;
+function whileStmt(stream) {
+
 	console.log("whileStmt")
 	// finds while, then bool expression, then block
 	// If not, then error
 
-	boolExpr(tkns);
-	block(tkns);
+	boolExpr(stream);
+	block(stream);
 }
 
-function ifStmt(tkns) {
-	curToke++;
+function ifStmt(stream) {
+
 	console.log("ifStmt")
 	// finds if, then bool expression, then block
 	// If not, then error
 
-	boolExpr(tkns);
-	block(tkns);
+	boolExpr(stream);
+	block(stream);
 }
 
-function expr(tkns) {
-	curToke++;
+function expr(stream) {
 	console.log("expr")
 	// finds int, string, or bool expression, or ID
 	// If not, then error
-
-	intExpr(tkns);
-	stringExpr(tkns);
-	boolExpr(tkns);
+	if(stream[0].type == "QUOTE") {
+	  return stringExpr(stream);
+	} else if(stream[0].type == "DIGIT_r") {
+		return intExpr(stream);
+	}else if(stream[0].kind == "(") {
+		return boolExpr(stream);
+	}
 }
 
-function intExpr(tkns) {
-	curToke++;
+function intExpr(stream) {
 	console.log("intExpr")
 	// finds digit, then int operator, then expression
 	// If not, then error
 
-	expr(tkns);
 }
 
-function stringExpr(tkns) {
-	curToke++;
+function stringExpr(stream) {
+
 	console.log("stringExpr")
-	// finds quote, then charlist, then end quote
-	// If not, then error
-
-	charList(tkns);
+	console.log(stream[0].type)
+	if(stream[0].type == "QUOTE") {
+		// Print found token
+		outMessage("PARSER -- Found [QUOTE]");
+		// Get rid of element
+		stream.shift();
+	}
+	return charList(stream);
 }
 
-function boolExpr(tkns) {
-	curToke++;
+function boolExpr(stream) {
+
 	console.log("boolExpr")
 	// finds paren, then expression, bool operator, then expression, then paren
 	// If not, then error
 
-	expr(tkns);
-	expr(tkns);
+	expr(stream);
+	expr(stream);
 }
 
-function charList(tkns) {
-	curToke++;
-	console.log("charList")
+function charList(stream) {
+  var stringList = "";
+	console.log(stream[0].type)
+	while(stream[0].type != "QUOTE") {
+		stringList += stream[0].kind;
+		stream.shift();
+  }
 	// finds char, then charlist
 	// OR finds space, then charlist
 	// If not, no error. Charlist can accept empty string
-
-	charList(tkns);
+  console.log(stringList)
+	return stringList;
 }

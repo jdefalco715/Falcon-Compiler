@@ -797,7 +797,7 @@ function lexer(){
 			} else {
 
 				// Lexer succeeded message, including warning and error numbers
-				outMessage("INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
+				outMessage("INFO    LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
 
 				// Send token stream to parser
 				parse(tokens, progNumber);
