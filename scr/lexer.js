@@ -642,6 +642,8 @@ function lexer(){
 						// Send token stream to parser
 						parse(tokens, progNumber);
 
+						tokens = [];
+
 					}
 
 					// Ensure not at end of program
