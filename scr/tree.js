@@ -5,11 +5,15 @@
 // work by Michael Ardizzone and Tim Smith.
 //-----------------------------------------
 
+var root;
+var cur;
+
 function Tree() {
     // ----------
     // Attributes
     // ----------
-    
+
+
     this.root = null;  // Note the NULL root node of this tree.
     this.cur = {};     // Note the EMPTY current node of the tree we're building.
 

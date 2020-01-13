@@ -24,13 +24,13 @@ function parse(tkns, progNumber) {
 	// Define a new CST object
 	var cst = new Tree();
 
+	cst.addNode("Root", " Branch");
+
 	// Break in line
 	outMessage("");
 
 	// Output prasing programing #
 	outMessage("INFO   PARSER -- Parsing program " + progNumber);
-
-	cst.addNode("Root", " Branch");
 
 	// Start with program
   	program(stream , cst);
