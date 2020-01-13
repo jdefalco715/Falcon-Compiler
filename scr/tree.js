@@ -50,7 +50,7 @@ function Tree() {
     };
 
     // Note that we're done with this branch of the tree...
-    this.endChildren = function() {
+    this.endChild = function() {
         // ... by moving "up" to our parent node (if possible).
         if ((this.cur.parent !== null) && (this.cur.parent.name !== undefined))
         {

@@ -7,6 +7,10 @@ var pErrors = 0;
 
 var stream = [];
 
+var braceLvl = 0;
+
+
+
 function parse(tkns, progNumber) {
 	// Need to handle braces for levels of CST
 	var scopeLvl = 0;
@@ -26,15 +30,21 @@ function parse(tkns, progNumber) {
 	// Output prasing programing #
 	outMessage("INFO   PARSER -- Parsing program " + progNumber);
 
+	cst.addNode("Root", " Branch");
+
 	// Start with program
-  	program(stream);
+  	program(stream , cst);
 
   	if (pErrors == 0) {
 
 		// Output parser success
 		outMessage("INFO   PARSING SUCCESS! -- Parsing succeeded with " + pErrors + " errors.");
 
+		// Break in log
+		outMessage("");
+
 		// Display CST
+		outMessage(cst.toString());
 
 		// Move to semantic analysis
 		// Not sure yet if using CST or token stream for anaylsis
@@ -52,10 +62,12 @@ function parse(tkns, progNumber) {
 
 }
 
-function program(stream) {
+function program(stream, cst) {
 
 	// Output found program
 	outMessage("PARSER RULE -- Found [Program]");
+
+	cst.addNode("Program", "branch");
 
 	// Goes to block
 	block(stream);
@@ -66,7 +78,15 @@ function program(stream) {
 		// Output token found
 		outMessage("PARSER TOKEN -- Found token [EOP]");
 
+		// Add node for token
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
+
 	}
+
+	cst.endChild();
 
 	return;
 }
@@ -78,10 +98,25 @@ function block(stream) {
 	// Display found block
 	outMessage("PARSER RULE -- Found [Block]");
 
+
 	if(stream[0].type == "L_BRACE") {
 
 		// Output token found
 		outMessage("PARSER TOKEN -- Found token [L_BRACE]");
+
+		// Add node for token
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
+
+		// Increment brace level
+		braceLvl++;
+
+		// Ouptut brace level
+		outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
+
+		cst.addNode("Block", "branch");
 
 		// If brace is found, remove from array
 		stream.shift();
@@ -93,6 +128,21 @@ function block(stream) {
 
 			// Output token found
 			outMessage("PARSER TOKEN -- Found token [R_BRACE]");
+
+			// Add node for token
+			cst.addNode(stream[0].kind, "leaf");
+
+			// Move branches
+			cst.endChild();
+
+			// Increment brace level
+			braceLvl--;
+
+			// Ouptut brace level
+			outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
+
+			// Move branch
+			cst.endChild();
 
 			// Remove from array
 			stream.shift();
@@ -132,11 +182,16 @@ function stmtList(stream) {
 	// Display found block
 	outMessage("PARSER RULE -- Found [StatementList]");
 
+	// Add node to cst
+	cst.addNode("StatementList", "branch");
+
 	// As long is there is not an empty statement, will call statement function
 	// NOT SURE IF UNDEFINED IS CORRECT CALL
 	if (stream[0].type != ' ') {
 		stmt(stream);
 	}
+
+	cst.endChild();
 
 	return;
 	// If not, then error
@@ -147,39 +202,51 @@ function stmt(stream) {
 	// Print found rule
 	outMessage("PARSER RULE -- Found [Statement]");
 
+	// Add node to cst
+	cst.addNode("Statement", "branch");
+
 	switch(stream[0].type){
 
-  		case "PRINT": //print
+  		case "PRINT": // Print
 			printStmt(stream);
 			stmt(stream);
 			break;
 
-		case "ASSIGN": //assignment
+	  	case "ID":      // ID
+	  		cst.addNode("ID", "branch");
+	  		assignStmt(stream);
+	  		stmt(stream);
+	  		break;
+
+		case "ASSIGN": // Assignment
 			assignStmt(stream);
 			stmt(stream);
 	  		break;
 
-		case "IFSTMT": //if
+		case "IFSTMT": // If
 			ifStmt(stream);
 			stmt(stream);
 	  		break;
 
-  		case "V_TYPE": //varDecl
+  		case "V_TYPE": // varDecl
   			varDecl(stream);
 			stmt(stream);
 	  		break;
 
-		case "WHILESTMT": //while
+		case "WHILESTMT": // While
 			whileStmt(stream);
 			stmt(stream);
 	  		break;
 
-		case "L_BRACE": //block
+		case "L_BRACE": // Block
 			block(stream);
 			stmt(stream);
 	  		break;
 
-	  	default: // empty statement, should return to break recursion
+
+
+	  	default: // Empty statement, should return to break recursion
+	  		cst.endChild();
 	  		return;
 	  		break;
 
@@ -187,12 +254,21 @@ function stmt(stream) {
 }
 
 function printStmt(stream) {
-	// finds print keyword, then parenthesis, then expression
+	// Finds print keyword, then parenthesis, then expression
 	// If not, then error
 	outMessage("PARSER RULE -- Found [PrintStatement]");
 
+	// Add node to cst
+	cast.addNode("printStmt", "branch");
+
 	// Output found print token (found in stmtList)
 	outMessage("PARSER TOKEN -- Found token [PRINT]")
+
+	// Add token to token
+	cst.addNode(stream[0].kind, "leaf");
+
+	// Move branches
+	cst.endChild();
 
 	// Remove from array
 	stream.shift();
@@ -201,6 +277,12 @@ function printStmt(stream) {
 
 		// Output found left paren token
 		outMessage("PARSER TOKEN -- Found token [L_PAREN]");
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -212,6 +294,12 @@ function printStmt(stream) {
 
 			// Output token found 
 			outMessage("PARSER TOKEN -- Found token [R_PAREN]");
+
+			// Add token to cst
+			cst.addNode(stream[0].kind, "leaf");
+
+			// Move branches
+			cst.endChild();
 
 			// Remove from array
 			stream.shift();
@@ -246,14 +334,23 @@ function printStmt(stream) {
 }
 
 function assignStmt(stream) {
-	// finds ID, then assign, then expression
+	// Finds ID, then assign, then expression
 	// If not, then error
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [AssignStatement]");
 
+	// Add node to cst
+	cst.addNode("AssignStatement", "branch");
+
 	// Print found token 
 	outMessage("PARSER TOKEN -- Found token [ID] - " + stream[0].kind);
+
+	// Add token to cst
+	cst.addNode(stream[0].kind, "leaf");
+
+	// Move branches
+	cst.endChild();
 
 	// Remove from array
 	stream.shift();
@@ -262,6 +359,12 @@ function assignStmt(stream) {
 
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [ASSIGN]");
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -280,18 +383,29 @@ function assignStmt(stream) {
 		stream.shift();
 	}
 
+	endChild();
+
 	return;
 }
 
 function varDecl(stream) {
-	// finds type, then ID
+	// Finds type, then ID
 	// If not, then error
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [VarDeclaration]");
 
+	// Add node to cst
+	cst.addNode("VarDeclaration", "branch");
+
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [V_TYPE] - " + stream[0].kind);
+
+	// Add token to cst
+	cst.addNode(stream[0].kind, "leaf");
+
+	// Move branches
+	cst.endChild();
 
 	// Remove from array 
 	stream.shift();
@@ -300,6 +414,12 @@ function varDecl(stream) {
 
 		//Print found token
 		outMessage("PARSER TOKEN -- Found token [ID] - " + stream[0].kind);
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -316,20 +436,31 @@ function varDecl(stream) {
 		stream.shift();
 	}
 
+	endChild();
+
 	return;
 }
 
 function whileStmt(stream) {
-	// finds while, then bool expression, then block
+	// Finds while, then bool expression, then block
 	// If not, then error
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [WhileStatement]");
 
+	// Add node to cst
+	cst.addNode("WhileStatement", "branch");
+
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [WHILE]");
 
-	// remove from array
+	// Add token to cst
+	cst.addNode(stream[0].kind, "leaf");
+
+	// Move branches
+	cst.endChild();
+
+	// Remove from array
 	stream.shift();
 
 	// Call boolean expression
@@ -337,20 +468,31 @@ function whileStmt(stream) {
 
 	// Call block
 	block(stream);
+
+	endChild();
 
 	return;
 }
 
 function ifStmt(stream) {
-	// finds if, then calls bool expression, then calls block
+	// Finds if, then calls bool expression, then calls block
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [IfStatement]");
 
+	// Add node to cst
+	cst.addNode("IfStatement", "branch");
+
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [IF]");
 
-	// remove from array
+	// Add token to cst
+	cst.addNode(stream[0].kind, "leaf");
+
+	// Move branches
+	cst.endChild();
+
+	// Remove from array
 	stream.shift();
 
 	// Call boolean expression
@@ -359,15 +501,21 @@ function ifStmt(stream) {
 	// Call block
 	block(stream);
 
+	// Move branches
+	cst.endChild();
+
 	return;
 }
 
 function expr(stream) {
-	// finds int, string, or bool expression, or ID
+	// Finds int, string, or bool expression, or ID
 	// If not, then error
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [Expression]");
+
+	// Add node to cst
+	cst.addNode("Expression", "branch");
 
 	if (stream[0].type == "QUOTE") {
 
@@ -386,23 +534,40 @@ function expr(stream) {
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [ID]");
 
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
+
 		// Remove from stream
 		stream.shift();
 
 	}
 
+	cst.endChild();
+
 	return;
 }
 
 function intExpr(stream) {
-	// finds digit, then int operator, then expression
+	// Finds digit, then int operator, then expression
 	// If not, then error
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [IntExpression]");
 
+	// Add node to cst
+	cst.addNode("IntExpression", "branch");
+
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [DIGIT]");
+
+	// Add token to cst
+	cst.addNode(stream[0].kind, "leaf");
+
+	// Move branches
+	cst.endChild();
 
 	// Remove from array
 	stream.shift();
@@ -411,6 +576,12 @@ function intExpr(stream) {
 
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [PLUS]");
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -426,9 +597,18 @@ function stringExpr(stream) {
 	// Print found rule
 	outMessage("PARSER RULE -- Found [StringExpression]");
 
+	// Add node to cst
+	cst.addNode("StringExpression", "branch");
+
 	if(stream[0].type == "QUOTE") {
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [QUOTE]");
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Get rid of element
 		stream.shift();
@@ -436,7 +616,12 @@ function stringExpr(stream) {
 		// Print found rule
 		// Printing this here instead of inside charList because charList is recursive
 		// Would print for every token within string
+
+		//Output found rule
 		outMessage("PARSER RULE -- Found [CharList]");
+
+		// Add node to cst
+		cst.addNode("CharList", "branch");
 
 		// Call charList
 		charList(stream);
@@ -444,6 +629,12 @@ function stringExpr(stream) {
 		if (stream[0].type == "QUOTE") {
 			// Print found token
 			outMessage("PARSER TOKEN -- Found token [QUOTE]");
+
+			// Add token to cst
+			cst.addNode(stream[0].kind, "leaf");
+
+			// Move branches
+			cst.endChild();
 
 			// Get rid of element
 			stream.shift();
@@ -464,7 +655,7 @@ function stringExpr(stream) {
 }
 
 function boolExpr(stream) {
-	// finds paren, then expression, bool operator, then expression, then paren
+	// Finds paren, then expression, bool operator, then expression, then paren
 	// If not, then error
 
 	// Print found rule
@@ -475,6 +666,12 @@ function boolExpr(stream) {
 
 		// Print found token 
 		outMessage("PARSER TOKEN -- Found token [L_PAREN]");
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -487,6 +684,12 @@ function boolExpr(stream) {
 
 			// Print found token
 			outMessage("PARSER TOKEN -- Found token [" + stream[0].type + "]");
+
+			// Add token to cst
+			cst.addNode(stream[0].kind, "leaf");
+
+			// Move branches
+			cst.endChild();
 
 			// Remove from array
 			stream.shift();
@@ -511,6 +714,12 @@ function boolExpr(stream) {
 			// Print found token
 			outMessage("PARSER TOKEN -- Found token [R_PAREN]");
 
+			// Add token to cst
+			cst.addNode(stream[0].kind, "leaf");
+
+			// Move branches
+			cst.endChild();
+
 			// Remove from array
 			stream.shift();
 
@@ -531,6 +740,12 @@ function boolExpr(stream) {
 
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [" + stream[0].type + "]");
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -558,6 +773,12 @@ function charList(stream) {
 
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [" + stream[0].type + "] - " + stream[0].kind);
+
+		// Add token to cst
+		cst.addNode(stream[0].kind, "leaf");
+
+		// Move branches
+		cst.endChild();
 
 		// Remove from array
 		stream.shift();
