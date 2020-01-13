@@ -44,6 +44,9 @@ function parse(tkns, progNumber) {
 		// Break in log
 		outMessage("");
 
+		// Output header for CST
+		outMessage("INFO   CST - Displaying CST for program " + progNumber);
+
 		// Display CST
 		outMessage(cst.toString());
 
@@ -82,10 +85,11 @@ function program(stream, cst) {
 		// Add node for token
 		cst.addNode(stream[0].kind, "leaf");
 
-		// Move branches
-		cst.endChild();
-
 	}
+
+
+	// Move branches
+	cst.endChild();
 
 	cst.endChild();
 
@@ -99,6 +103,8 @@ function block(stream, cst) {
 	// Display found block
 	outMessage("PARSER RULE -- Found [Block]");
 
+	cst.addNode("Block", "branch");
+
 
 	if(stream[0].type == "L_BRACE") {
 
@@ -108,16 +114,11 @@ function block(stream, cst) {
 		// Add node for token
 		cst.addNode(stream[0].kind, "leaf");
 
-		// Move branches
-		cst.endChild();
-
 		// Increment brace level
 		braceLvl++;
 
 		// Ouptut brace level
 		outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
-
-		cst.addNode("Block", "branch");
 
 		// If brace is found, remove from array
 		stream.shift();
@@ -141,9 +142,6 @@ function block(stream, cst) {
 
 			// Ouptut brace level
 			outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
-
-			// Move branch
-			cst.endChild();
 
 			// Remove from array
 			stream.shift();
@@ -171,6 +169,9 @@ function block(stream, cst) {
 		// Remove from array
 		stream.shift();
 	}
+
+	// Move branches
+	cst.endChild();
 
 	return;
 }
@@ -268,9 +269,6 @@ function printStmt(stream, cst) {
 	// Add token to token
 	cst.addNode(stream[0].kind, "leaf");
 
-	// Move branches
-	cst.endChild();
-
 	// Remove from array
 	stream.shift();
 
@@ -330,6 +328,9 @@ function printStmt(stream, cst) {
 		stream.shift();
 	}
 
+	// Move branches
+	cst.endChild();
+
 	return;
 
 }
@@ -349,9 +350,6 @@ function assignStmt(stream, cst) {
 
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
-
-	// Move branches
-	cst.endChild();
 
 	// Remove from array
 	stream.shift();
@@ -384,6 +382,9 @@ function assignStmt(stream, cst) {
 		stream.shift();
 	}
 
+	// Move branches
+	cst.endChild();
+
 	endChild();
 
 	return;
@@ -407,9 +408,6 @@ function varDecl(stream, cst) {
 
 	// Move branches
 	cst.endChild();
-
-	// Remove from array 
-	stream.shift();
 
 	if (stream[0].type == "ID") {
 
@@ -437,7 +435,10 @@ function varDecl(stream, cst) {
 		stream.shift();
 	}
 
-	endChild();
+	// Move branches
+	cst.endChild();
+
+	cst.endChild();
 
 	return;
 }
@@ -457,9 +458,6 @@ function whileStmt(stream, cst) {
 
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
-
-	// Move branches
-	cst.endChild();
 
 	// Remove from array
 	stream.shift();
@@ -546,6 +544,9 @@ function expr(stream, cst) {
 
 	}
 
+	// Move branches
+	cst.endChild();
+
 	cst.endChild();
 
 	return;
@@ -566,9 +567,6 @@ function intExpr(stream, cst) {
 
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
-
-	// Move branches
-	cst.endChild();
 
 	// Remove from array
 	stream.shift();
@@ -689,9 +687,6 @@ function boolExpr(stream, cst) {
 			// Add token to cst
 			cst.addNode(stream[0].kind, "leaf");
 
-			// Move branches
-			cst.endChild();
-
 			// Remove from array
 			stream.shift();
 		} else {
@@ -764,6 +759,9 @@ function boolExpr(stream, cst) {
 		stream.shift();
 	}
 
+	// Move branches
+	cst.endChild();
+
 	return;
 
 }
@@ -778,15 +776,15 @@ function charList(stream, cst) {
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
 
-		// Move branches
-		cst.endChild();
-
 		// Remove from array
 		stream.shift();
 
 		// call Charlist
 		charList(stream, cst);
 	}
+
+	// Move branches
+	cst.endChild();
 
 	return;
 }
