@@ -24,7 +24,8 @@ function parse(tkns, progNumber) {
 	// Define a new CST object
 	var cst = new Tree();
 
-	cst.addNode("Root", " Branch");
+	// Add node
+	cst.addNode("Root", "branch");
 
 	// Break in line
 	outMessage("");
@@ -70,7 +71,7 @@ function program(stream, cst) {
 	cst.addNode("Program", "branch");
 
 	// Goes to block
-	block(stream);
+	block(stream, cst);
 
 	// Check for EOP token
 	if(stream[0].type == "EOP") {
@@ -91,7 +92,7 @@ function program(stream, cst) {
 	return;
 }
 
-function block(stream) {
+function block(stream, cst) {
 	// Finds a brace, goes to statement list
 	// If no brace, then error
 
@@ -122,7 +123,7 @@ function block(stream) {
 		stream.shift();
 
 		// Call statement list
-	  	stmtList(stream);
+	  	stmtList(stream, cst);
 
 	  	if(stream[0].type == "R_BRACE") {
 
@@ -174,7 +175,7 @@ function block(stream) {
 	return;
 }
 
-function stmtList(stream) {
+function stmtList(stream, cst) {
 	console.log("stmtList: " + stream[0].type);
 	// finds a statment
 	// If not, no error. Statement list can accept empty string. Find brace.
@@ -188,7 +189,7 @@ function stmtList(stream) {
 	// As long is there is not an empty statement, will call statement function
 	// NOT SURE IF UNDEFINED IS CORRECT CALL
 	if (stream[0].type != ' ') {
-		stmt(stream);
+		stmt(stream, cst);
 	}
 
 	cst.endChild();
@@ -198,7 +199,7 @@ function stmtList(stream) {
 
 }
 
-function stmt(stream) {
+function stmt(stream, cst) {
 	// Print found rule
 	outMessage("PARSER RULE -- Found [Statement]");
 
@@ -208,39 +209,39 @@ function stmt(stream) {
 	switch(stream[0].type){
 
   		case "PRINT": // Print
-			printStmt(stream);
-			stmt(stream);
+			printStmt(stream, cst);
+			stmt(stream, cst);
 			break;
 
 	  	case "ID":      // ID
 	  		cst.addNode("ID", "branch");
-	  		assignStmt(stream);
-	  		stmt(stream);
+	  		assignStmt(stream, cst);
+	  		stmt(stream, cst);
 	  		break;
 
 		case "ASSIGN": // Assignment
-			assignStmt(stream);
-			stmt(stream);
+			assignStmt(stream, cst);
+			stmt(stream, cst);
 	  		break;
 
 		case "IFSTMT": // If
-			ifStmt(stream);
-			stmt(stream);
+			ifStmt(stream, cst);
+			stmt(stream, cst);
 	  		break;
 
   		case "V_TYPE": // varDecl
-  			varDecl(stream);
-			stmt(stream);
+  			varDecl(stream, cst);
+			stmt(stream, cst);
 	  		break;
 
 		case "WHILESTMT": // While
-			whileStmt(stream);
-			stmt(stream);
+			whileStmt(stream, cst);
+			stmt(stream, cst);
 	  		break;
 
 		case "L_BRACE": // Block
-			block(stream);
-			stmt(stream);
+			block(stream, cst);
+			stmt(stream, cst);
 	  		break;
 
 
@@ -253,13 +254,13 @@ function stmt(stream) {
 	}
 }
 
-function printStmt(stream) {
+function printStmt(stream, cst) {
 	// Finds print keyword, then parenthesis, then expression
 	// If not, then error
 	outMessage("PARSER RULE -- Found [PrintStatement]");
 
 	// Add node to cst
-	cast.addNode("printStmt", "branch");
+	cst.addNode("PrintStatement", "branch");
 
 	// Output found print token (found in stmtList)
 	outMessage("PARSER TOKEN -- Found token [PRINT]")
@@ -288,7 +289,7 @@ function printStmt(stream) {
 		stream.shift();
 
 		// Call expr
-		expr(stream);
+		expr(stream, cst);
 
 		if (stream[0].type == "R_PAREN") {
 
@@ -333,7 +334,7 @@ function printStmt(stream) {
 
 }
 
-function assignStmt(stream) {
+function assignStmt(stream, cst) {
 	// Finds ID, then assign, then expression
 	// If not, then error
 
@@ -370,7 +371,7 @@ function assignStmt(stream) {
 		stream.shift();
 
 		// Call expression
-		expr(stream);
+		expr(stream, cst);
 	} else {
 
 		// Print error
@@ -388,7 +389,7 @@ function assignStmt(stream) {
 	return;
 }
 
-function varDecl(stream) {
+function varDecl(stream, cst) {
 	// Finds type, then ID
 	// If not, then error
 
@@ -441,7 +442,7 @@ function varDecl(stream) {
 	return;
 }
 
-function whileStmt(stream) {
+function whileStmt(stream, cst) {
 	// Finds while, then bool expression, then block
 	// If not, then error
 
@@ -464,17 +465,17 @@ function whileStmt(stream) {
 	stream.shift();
 
 	// Call boolean expression
-	boolExpr(stream);
+	boolExpr(stream, cst);
 
 	// Call block
-	block(stream);
+	block(stream, cst);
 
 	endChild();
 
 	return;
 }
 
-function ifStmt(stream) {
+function ifStmt(stream, cst) {
 	// Finds if, then calls bool expression, then calls block
 
 	// Print found rule
@@ -496,10 +497,10 @@ function ifStmt(stream) {
 	stream.shift();
 
 	// Call boolean expression
-	boolExpr(stream);
+	boolExpr(stream, cst);
 
 	// Call block
-	block(stream);
+	block(stream, cst);
 
 	// Move branches
 	cst.endChild();
@@ -507,7 +508,7 @@ function ifStmt(stream) {
 	return;
 }
 
-function expr(stream) {
+function expr(stream, cst) {
 	// Finds int, string, or bool expression, or ID
 	// If not, then error
 
@@ -519,15 +520,15 @@ function expr(stream) {
 
 	if (stream[0].type == "QUOTE") {
 
-		stringExpr(stream);
+		stringExpr(stream, cst);
 
 	} else if (stream[0].type == "DIGIT_r") {
 
-		intExpr(stream);
+		intExpr(stream, cst);
 
 	}else if (stream[0].type == "L_PAREN" || stream[0].type == "BOOL_T" || stream[0].type == "BOOL_F") {
 
-		boolExpr(stream);
+		boolExpr(stream, cst);
 
 	} else if (stream[0].type == "ID") {
 		
@@ -550,7 +551,7 @@ function expr(stream) {
 	return;
 }
 
-function intExpr(stream) {
+function intExpr(stream, cst) {
 	// Finds digit, then int operator, then expression
 	// If not, then error
 
@@ -586,13 +587,13 @@ function intExpr(stream) {
 		// Remove from array
 		stream.shift();
 
-		expr(stream);
+		expr(stream, cst);
 	}
 
 	return;
 }
 
-function stringExpr(stream) {
+function stringExpr(stream, cst) {
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [StringExpression]");
@@ -624,7 +625,7 @@ function stringExpr(stream) {
 		cst.addNode("CharList", "branch");
 
 		// Call charList
-		charList(stream);
+		charList(stream, cst);
 
 		if (stream[0].type == "QUOTE") {
 			// Print found token
@@ -654,7 +655,7 @@ function stringExpr(stream) {
 	return;
 }
 
-function boolExpr(stream) {
+function boolExpr(stream, cst) {
 	// Finds paren, then expression, bool operator, then expression, then paren
 	// If not, then error
 
@@ -677,7 +678,7 @@ function boolExpr(stream) {
 		stream.shift();
 
 		// Call expression
-		expr(stream);
+		expr(stream, cst);
 
 		// Expect boolop
 		if (stream[0].type == "ISEQUAL" || stream[0].type == "NOTEQUAL") {
@@ -706,7 +707,7 @@ function boolExpr(stream) {
 		}
 
 		// Call expression (again)
-		expr(stream);
+		expr(stream, cst);
 
 		// Check for closing brace
 		if (stream[0].type == "R_PAREN") {
@@ -767,7 +768,7 @@ function boolExpr(stream) {
 
 }
 
-function charList(stream) {
+function charList(stream, cst) {
 
 	if (stream[0].type == "CHAR" || stream[0].type == "SPACE") {
 
@@ -784,7 +785,7 @@ function charList(stream) {
 		stream.shift();
 
 		// call Charlist
-		charList(stream);
+		charList(stream, cst);
 	}
 
 	return;

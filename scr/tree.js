@@ -5,9 +5,6 @@
 // work by Michael Ardizzone and Tim Smith.
 //-----------------------------------------
 
-var root;
-var cur;
-
 function Tree() {
     // ----------
     // Attributes
