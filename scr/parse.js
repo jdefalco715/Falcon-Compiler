@@ -132,54 +132,58 @@ function stmtList(stream) {
 	// Display found block
 	outMessage("PARSER RULE -- Found [StatementList]");
 
-	switch(stream[0].type){
-
-  		case "PRINT": //print
-  			// Print found rule
-			outMessage("PARSER RULE -- Found [Statement]");
-			printStmt(stream);
-			break;
-
-		case "ASSIGN": //assignment
-			// Print found rule
-			outMessage("PARSER RULE -- Found [Statement]");
-	  		assignStmt(stream);
-	  		break;
-
-		case "IFSTMT": //if
-			// Print found rule
-			outMessage("PARSER RULE -- Found [Statement]");
-  			ifStmt(stream);
-	  		break;
-
-  		case "V_TYPE": //varDecl
-  			// Print found rule
-			outMessage("PARSER RULE -- Found [Statement]");
-			varDecl(stream);
-	  		break;
-
-		case "WHILESTMT": //while
-			// Print found rule
-			outMessage("PARSER RULE -- Found [Statement]");
-			whileStmt(stream);
-	  		break;
-
-		case "L_BRACE": //block
-			// Print found rule
-			outMessage("PARSER RULE -- Found [Statement]");
-			block(stream);
-	  		break;
-
-	  	case " ": //empty string
-	  		break;
-
-		default:
-    		break;
+	// As long is there is not an empty statement, will call statement function
+	// NOT SURE IF UNDEFINED IS CORRECT CALL
+	if (stream[0].type != ' ') {
+		stmt(stream);
 	}
 
 	return;
 	// If not, then error
 
+}
+
+function stmt(stream) {
+	// Print found rule
+	outMessage("PARSER RULE -- Found [Statement]");
+
+	switch(stream[0].type){
+
+  		case "PRINT": //print
+			printStmt(stream);
+			stmt(stream);
+			break;
+
+		case "ASSIGN": //assignment
+			assignStmt(stream);
+			stmt(stream);
+	  		break;
+
+		case "IFSTMT": //if
+			ifStmt(stream);
+			stmt(stream);
+	  		break;
+
+  		case "V_TYPE": //varDecl
+  			varDecl(stream);
+			stmt(stream);
+	  		break;
+
+		case "WHILESTMT": //while
+			whileStmt(stream);
+			stmt(stream);
+	  		break;
+
+		case "L_BRACE": //block
+			block(stream);
+			stmt(stream);
+	  		break;
+
+	  	default: // empty statement, should return to break recursion
+	  		return;
+	  		break;
+
+	}
 }
 
 function printStmt(stream) {
@@ -203,14 +207,39 @@ function printStmt(stream) {
 
 		// Call expr
 		expr(stream);
+
+		if (stream[0].type == "R_PAREN") {
+
+			// Output token found 
+			outMessage("PARSER TOKEN -- Found token [R_PAREN]");
+
+			// Remove from array
+			stream.shift();
+
+		} else {
+
+			//Output error
+			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_PAREN [(] was expected");
+
+			// Add to errors
+			pErrors++;
+
+			// Remove from array
+			stream.shift();
+
+		}
+
 	} else {
 
 		//Output error
 		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_PAREN [(] was expected");
+
+		// Add to errors
+		pErrors++;
+
+		// Remove from array
+		stream.shift();
 	}
-
-	// Handle expected right paren
-
 
 	return;
 
@@ -399,7 +428,7 @@ function stringExpr(stream) {
 
 	if(stream[0].type == "QUOTE") {
 		// Print found token
-		outMessage("PARSER TOKEN -- Found [QUOTE]");
+		outMessage("PARSER TOKEN -- Found token [QUOTE]");
 
 		// Get rid of element
 		stream.shift();
@@ -414,7 +443,7 @@ function stringExpr(stream) {
 
 		if (stream[0].type == "QUOTE") {
 			// Print found token
-			outMessage("PARSER TOKEN -- Found [QUOTE]");
+			outMessage("PARSER TOKEN -- Found token [QUOTE]");
 
 			// Get rid of element
 			stream.shift();
@@ -430,6 +459,8 @@ function stringExpr(stream) {
 		// Remove from array 
 		stream.shift();
 	}
+
+	return;
 }
 
 function boolExpr(stream) {
