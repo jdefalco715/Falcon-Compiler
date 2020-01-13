@@ -1,0 +1,9 @@
+The one major issue that came across in the parser was when it was orginially built, it was not recursivly going through for each token 
+in the token stream. While it did follow the stream correctly, and output to log when it needed too, it would follow a path from root to
+the lowest boiled down form of a rule from our class grammar, and then throw an error for a missing expected right brace. 
+
+After reveiwing what I had written I saw the issue was that certain functions where not calling back, in the example where a statement 
+would follow another statement if entered in the input. I started to solve this by putting a call for the statement function after every
+keyword statement function and every expression funciton, but that caused another error somewhere that halted the entire parsing process.
+I realized it would just be after the call for each statement file where I would have to put the recursive call, and the issue was resolved
+with the parser working correctly.
