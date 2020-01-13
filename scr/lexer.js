@@ -680,6 +680,14 @@ function lexer(){
 		   // Check for whitspace character
 		   if(testChar == ' ') {
 
+		   	if (isString) {
+
+		   		// Add token for space if found in a string
+		   		// Need this token for parsing multiple words in a string
+		   		addToken("SPACE", "space", i + 1, tokenPointer + 1);
+
+		   	}
+
 		   	// Ignore and move pointer
 		   	tokenPointer++;
 
