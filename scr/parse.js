@@ -105,7 +105,6 @@ function block(stream, cst) {
 
 	cst.addNode("Block", "branch");
 
-
 	if(stream[0].type == "L_BRACE") {
 
 		// Output token found
@@ -201,54 +200,74 @@ function stmtList(stream, cst) {
 }
 
 function stmt(stream, cst) {
-	// Print found rule
-	outMessage("PARSER RULE -- Found [Statement]");
-
-	// Add node to cst
-	cst.addNode("Statement", "branch");
 
 	switch(stream[0].type){
 
   		case "PRINT": // Print
+  			// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
 			printStmt(stream, cst);
 			stmt(stream, cst);
 			break;
 
 	  	case "ID":      // ID
+	  		// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
 	  		cst.addNode("ID", "branch");
 	  		assignStmt(stream, cst);
 	  		stmt(stream, cst);
 	  		break;
 
 		case "ASSIGN": // Assignment
+			// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
 			assignStmt(stream, cst);
 			stmt(stream, cst);
 	  		break;
 
 		case "IFSTMT": // If
+			// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
 			ifStmt(stream, cst);
 			stmt(stream, cst);
 	  		break;
 
   		case "V_TYPE": // varDecl
+  			// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
   			varDecl(stream, cst);
 			stmt(stream, cst);
 	  		break;
 
 		case "WHILESTMT": // While
+			// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
 			whileStmt(stream, cst);
 			stmt(stream, cst);
 	  		break;
 
 		case "L_BRACE": // Block
+			// Print found rule
+			outMessage("PARSER RULE -- Found [Statement]");
+			// Add node to cst
+			cst.addNode("Statement", "branch");
 			block(stream, cst);
 			stmt(stream, cst);
 	  		break;
 
-
-
 	  	default: // Empty statement, should return to break recursion
-	  		cst.endChild();
 	  		return;
 	  		break;
 
@@ -279,9 +298,6 @@ function printStmt(stream, cst) {
 
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
-
-		// Move branches
-		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -606,9 +622,6 @@ function stringExpr(stream, cst) {
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
 
-		// Move branches
-		cst.endChild();
-
 		// Get rid of element
 		stream.shift();
 
@@ -629,11 +642,13 @@ function stringExpr(stream, cst) {
 			// Print found token
 			outMessage("PARSER TOKEN -- Found token [QUOTE]");
 
+			// Move branches
+			cst.endChild();
+			
 			// Add token to cst
 			cst.addNode(stream[0].kind, "leaf");
 
-			// Move branches
-			cst.endChild();
+			
 
 			// Get rid of element
 			stream.shift();
@@ -782,9 +797,6 @@ function charList(stream, cst) {
 		// call Charlist
 		charList(stream, cst);
 	}
-
-	// Move branches
-	cst.endChild();
 
 	return;
 }
