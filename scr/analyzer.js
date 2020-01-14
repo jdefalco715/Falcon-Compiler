@@ -104,3 +104,34 @@ function aWhileStmt(stream, index) {
 function checkID(stream, index) {
 
 }
+
+function addSymbol(name, type, line, scope) {
+	// Creates a var that holds the entry value
+	var temp = new Entry(name, type, line, scope);
+
+	// Add entry to the symbol table
+	symbolTable.push(temp);
+
+	return;
+}
+
+function printTable(symbolTable, progNumber) {
+
+	// Output header of symbol table
+	outMessage("Symbol Table for program " + progNumber);
+	outMessage("---------------------------");
+	outMessage("Name   Type   Line   Scope ");
+	outMessage("===========================");
+	
+
+
+	for (int y = 0; y < symbolTable.length, y++) {
+		// Temporary var to hold current entry
+		var curEnt = symbolTable[y];
+
+		// Output current entry details
+		// NEEDS TO BE BETTER FORMATTED FOR CLEANER OUTPUT
+		outMessage(curEnt.name + "" + curEnt.type + "" + curEnt.line + "" + curEnt.scope);
+	}
+
+}
