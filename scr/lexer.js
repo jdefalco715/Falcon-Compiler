@@ -378,7 +378,7 @@ function lexer(){
 			  	if(!isString) {
 
 			   		// Differentiate between assign and compare
-			   		if ((line.slice(tokenPointer, tokenPointer + 1)).match(EQUALS_r)) {
+			   		if ((line.slice(tokenPointer, tokenPointer + 2)).match(EQUALS_r)) {
 
 			   			// Add ISEQUAL token
 			   			addToken("ISEQUAL", "==", i + 1, tokenPointer + 1);
@@ -429,7 +429,7 @@ function lexer(){
 			  	if(!isString) {
 
 			   		// See if the two characters match the regex pattern for not equals
-			   		if ((line.slice(tokenPointer, tokenPointer + 1)).match(NOT_EQUALS)) {
+			   		if ((line.slice(tokenPointer, tokenPointer + 2)).match(NOT_EQUALS)) {
 
 			   			// Add NOTEQUAL token
 			   			addToken("NOTEQUAUL", "!=", i + 1, tokenPointer + 1);
@@ -640,7 +640,9 @@ function lexer(){
 						outMessage("INFO    LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
 
 						// Send token stream to parser
-						/* parse(tokens); */
+						parse(tokens, progNumber);
+
+						tokens = [];
 
 					}
 
@@ -678,12 +680,20 @@ function lexer(){
 		   // Check for whitspace character
 		   if(testChar == ' ') {
 
-		   	// Ignore and move pointer
-		   	tokenPointer++;
+		   		if (isString) {
 
-		   	hit = true;
+		   			// Add token for space if found in a string
+		   			// Need this token for parsing multiple words in a string
+		   			addToken("SPACE", "space", i + 1, tokenPointer + 1);
 
-		   	continue;
+		   		}
+
+		   		// Ignore and move pointer
+		   		tokenPointer++;
+
+		   		hit = true;
+
+		   		continue;
 
 		   }
 
@@ -797,10 +807,10 @@ function lexer(){
 			} else {
 
 				// Lexer succeeded message, including warning and error numbers
-				outMessage("INFO   LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
+				outMessage("INFO    LEXER --- Lexer succeeded with " + error + " error(s) and " + warning + " warning(s)");
 
 				// Send token stream to parser
-				/* parse(tokens); */
+				parse(tokens, progNumber);
 
 			}
 

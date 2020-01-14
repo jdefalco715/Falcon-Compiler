@@ -3,9 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Falcon Compiler</title>
+		<title >Falcon Compiler</title>
 		<meta name="description" content="Falcon Compiler">
 		<meta name="author" content="John DeFalco">
+
+		<link rel="icon" href="images/favicon.png">
 
 		<!-- link to css sheet -->
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
@@ -13,27 +15,29 @@
 		<!-- link to script files -->
 		<script type="text/javascript" src="scr/lexer.js"></script>
 		<script type="text/javascript" src="scr/token.js"></script>
+		<script type="text/javascript" src="scr/parse.js"></script>
+		<script type="text/javascript" src="scr/tree.js"></script>
 		<script type="text/javascript" src="scr/util.js"></script>
 		
 	</head>
 
 	<body>
-		<h1 tag="Title">Welcome to the Falcon Compiler!</h1>
+		<h1>Welcome to the Falcon Compiler!</h1>
 
 		<p>Enter sample program or programs below in the text box, and hit the 'Compile' button to begin.</p><br>
 
 		<!-- div containing source code / compile button -->
 		<div class="col1">
 			<h3>Input Source Code:</h3>
-			<textarea rows="15" cols="50" type="text" id="sc"></textarea><br>
-			<button type="button" name="start" onclick="lexer();">Compile</button>
+			<textarea rows="15" cols="50" type="text" id="sc" placeholder="Enter input here!"></textarea><br>
+			<button class="compile" type="button" name="start" onclick="lexer();">Compile</button>
 
 		</div>
 
 		<!-- div containing output text area -->
 		<div class="col2">
 			<h3>Console Output:</h3>
-			<textarea rows="15" cols="80" type="text" name="output" id="op" readonly></textarea>
+			<textarea rows="15" cols="90" type="text" name="output" id="op" placeholder="Output will be shown here!" readonly></textarea>
 		</div>	
 	</body>
 </html>

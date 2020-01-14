@@ -8,6 +8,60 @@ div.col2 {
 }
 
 body {
-background: rgb(182,217,217);
-background: linear-gradient(0deg, rgba(182,217,217,1) 0%, rgba(27,126,215,1) 100%);
+	background-image: url("../images/background.png");
+	background-size: cover;
+	background-repeat: no-repeat;
 }
+
+h1 {
+	color: white;
+	font-family: 'High Tower Text';
+}
+
+p {
+	color: white;
+	font-family: 'High Tower Text';
+}
+
+h3 {
+	color: white;
+	font-family: 'High Tower Text';
+}
+
+textarea {
+	opacity: 0.6;
+	resize: none;
+}
+
+button.compile {
+	box-shadow: 0px 1px 0px 0px #1c1b18;
+	background-color:#eae0c2;
+	border-radius:15px;
+	border:2px solid #333029;
+	display:inline-block;
+	cursor:pointer;
+	color:#505739;
+	font-family: 'High Tower Text';
+	font-size:14px;
+	font-weight:bold;
+	padding:12px 16px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+
+button.compile:hover {
+	background-color:#ccc2a6;
+}
+
+button.compile:active {
+	position:relative;
+	top:1px;
+}
+
+button.compile:focus {
+	outline: none;
+}
+
+/* Start http://www.cursors-4u.com */ 
+* {cursor: url(http://cur.cursors-4u.net/sports/spo-1/spo15.cur), auto !important;} 
+/* End http://www.cursors-4u.com */
