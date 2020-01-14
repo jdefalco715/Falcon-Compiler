@@ -58,6 +58,10 @@ function aVarDecl(stream, index) {
 	// Print found variable declaration
 	outMessage("ANALYZER --- Found Var Declaration");
 
+	// Add VarDecl to AST
+	/* Found VarDecl for AST goes here */
+
+
 
 }
 
@@ -65,11 +69,17 @@ function aAssignStmt(stream, index) {
 	// Print found assign statement
 	outMessage("ANALYZER --- Found Assign Statement");
 
+	// Add AssignStmt to AST
+	/* Found AssignStmt for AST goes here */
+
 }
 
 function aPrintStmt(stream, index) {
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
+
+	// Add PrintStmt to AST
+	/* Found PrintStmt for AST goes here */
 
 }
 
@@ -77,22 +87,20 @@ function aIfStmt(stream, index) {
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
+	// Add IfStmt to AST
+	/* Found IfStmt for AST goes here */
+
 }
 
 function aWhileStmt(stream, index) {
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 
+	// Add WhileStmt to AST
+	/* Found WhileStmt for AST goes here */
+
 }
 
 function checkID(stream, index) {
-
-}
-
-function addSymbol() {
-
-}
-
-function printTable() {
 
 }
