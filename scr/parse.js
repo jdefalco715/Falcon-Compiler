@@ -148,7 +148,7 @@ function block(stream, cst) {
 		} else {
 
 			// Output unexpected token found
-			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where R_BRACE [}] was expected");
+			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where R_BRACE [}] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 			// Add to errors
 			pErrors++;
@@ -160,7 +160,7 @@ function block(stream, cst) {
 	} else {
 
 		// Print error
-		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_BRACE [{] was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_BRACE [{] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 		// Add to errors
 		pErrors++;
@@ -322,7 +322,7 @@ function printStmt(stream, cst) {
 		} else {
 
 			//Output error
-			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_PAREN [(] was expected");
+			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_PAREN [(] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 			// Add to errors
 			pErrors++;
@@ -335,7 +335,7 @@ function printStmt(stream, cst) {
 	} else {
 
 		//Output error
-		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_PAREN [(] was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where L_PAREN [(] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 		// Add to errors
 		pErrors++;
@@ -389,7 +389,7 @@ function assignStmt(stream, cst) {
 	} else {
 
 		// Print error
-		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where ASSIGN was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where ASSIGN was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 		// Add to error counter 
 		pErrors++;
@@ -422,8 +422,8 @@ function varDecl(stream, cst) {
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
 
-	// Move branches
-	cst.endChild();
+	// Remove from array
+	stream.shift();
 
 	if (stream[0].type == "ID") {
 
@@ -433,22 +433,16 @@ function varDecl(stream, cst) {
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
 
-		// Move branches
-		cst.endChild();
-
 		// Remove from array
 		stream.shift();
 
 	} else {
 
 		// Print error
-		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where ID was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where ID was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 		// Add to errors
 		pErrors++;
-
-		// Remove from array
-		stream.shift();
 	}
 
 	// Move branches
@@ -644,11 +638,9 @@ function stringExpr(stream, cst) {
 
 			// Move branches
 			cst.endChild();
-			
+
 			// Add token to cst
 			cst.addNode(stream[0].kind, "leaf");
-
-			
 
 			// Get rid of element
 			stream.shift();
@@ -656,13 +648,10 @@ function stringExpr(stream, cst) {
 
 	} else {
 		// Print error
-		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where QUOTE [\"] was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where QUOTE [\"] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 		// Add to errors
 		pErrors++;
-
-		// Remove from array 
-		stream.shift();
 	}
 
 	return;
@@ -707,13 +696,10 @@ function boolExpr(stream, cst) {
 		} else {
 
 			// Print error
-			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where ISEQUAL [==] or NOTEQUAL [!=] was expected");
+			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where ISEQUAL [==] or NOTEQUAL [!=] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 			// Add to error counter
 			pErrors;
-
-			// Remove from array
-			stream.shift();
 		}
 
 		// Call expression (again)
@@ -737,7 +723,7 @@ function boolExpr(stream, cst) {
 		} else {
 
 			// Print error
-			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where R_PAREN [)] was expected");
+			outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where R_PAREN [)] was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 			// Add to error counter
 			pErrors;
@@ -765,13 +751,10 @@ function boolExpr(stream, cst) {
 		// Shouldn't get here with how program is structured, but putting here to be safe
 
 		// Print error
-		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where BOOLEXPR was expected");
+		outMessage("PARSER ERROR!-- Unexpected token " + stream[0].type + " [" + stream[0].kind +"] found where BOOLEXPR was expected at (" + stream[0].line + ":" + stream[0].column +")");
 
 		// Add to error counter
 		pErrors++;
-
-		// Remove from array
-		stream.shift();
 	}
 
 	// Move branches
