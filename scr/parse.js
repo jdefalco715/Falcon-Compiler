@@ -87,10 +87,6 @@ function program(stream, cst) {
 
 	}
 
-
-	// Move branches
-	cst.endChild();
-
 	cst.endChild();
 
 	return;
@@ -129,6 +125,8 @@ function block(stream, cst) {
 
 			// Output token found
 			outMessage("PARSER TOKEN -- Found token [R_BRACE]");
+
+			cst.endChild();
 
 			// Add node for token
 			cst.addNode(stream[0].kind, "leaf");
@@ -398,11 +396,6 @@ function assignStmt(stream, cst) {
 		stream.shift();
 	}
 
-	// Move branches
-	cst.endChild();
-
-	endChild();
-
 	return;
 }
 
@@ -530,7 +523,7 @@ function expr(stream, cst) {
 
 		stringExpr(stream, cst);
 
-	} else if (stream[0].type == "DIGIT_r") {
+	} else if (stream[0].type == "DIGIT") {
 
 		intExpr(stream, cst);
 
@@ -546,16 +539,10 @@ function expr(stream, cst) {
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
 
-		// Move branches
-		cst.endChild();
-
 		// Remove from stream
 		stream.shift();
 
 	}
-
-	// Move branches
-	cst.endChild();
 
 	cst.endChild();
 
@@ -588,9 +575,6 @@ function intExpr(stream, cst) {
 
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
-
-		// Move branches
-		cst.endChild();
 
 		// Remove from array
 		stream.shift();
@@ -757,8 +741,6 @@ function boolExpr(stream, cst) {
 		pErrors++;
 	}
 
-	// Move branches
-	cst.endChild();
 
 	return;
 
