@@ -1,6 +1,98 @@
 // Semantic Analyzer file
 
+// Variable to keep current scope level
+var scopeLvl = 0;
 
-function analyze() {
+// Errors during symantic analysis
+// Errors include type and scope mismatches
+var aErrors = 0;
+
+// Array for entries in symbol table
+var symbolTable = [];
+
+function analyze(tkns, progNumber) {
+
+	outMessage("INFO   ANALYZER --- Analyzing program " + progNumber);
+
+	// For loop cycles through stream of tokens
+	for (var i = 0; i < tkns.length, i++) {
+		// variable holder for current token
+		var curToken = tkns[i];
+
+		// Looks for left brace, increases scope level with brace
+		// Also prints found BLOCK in AST
+		if (curToken.type == "L_BRACE") {
+			scopeLvl++;
+			/* Found BLOCK for AST goes here */
+		}
+
+		// Looks for right brace, decreases scope level with brace
+		if (curToken.type == "R_BRACE")
+			scopeLvl--;
+
+		// Checks for TYPE token,  if found sends to aVarDecl function
+		if (curToken.type == "V_TYPE") {
+			aVarDecl(tkns, i);
+		}
+
+		// Checks for ID token, if found sends to checkID function
+		if (curToken.type == "ID") {
+			checkID(tkns, i);
+		}
+
+		// Checks for IF token, if found sends to aIfStmt function
+		if (curToken.type == "IF") {
+			aIfStmt(tkns, i);
+		}
+
+		// Checks for WHILE token, if found sends to aWhileStmt function
+		if (curtoken.type == "WHILE") {
+			aWhileStmt(tkns, i)
+		}
+	}
+
+
+}
+
+function aVarDecl(stream, index) {
+	// Print found variable declaration
+	outMessage("ANALYZER --- Found Var Declaration");
+
+
+}
+
+function aAssignStmt(stream, index) {
+	// Print found assign statement
+	outMessage("ANALYZER --- Found Assign Statement");
+
+}
+
+function aPrintStmt(stream, index) {
+	// Print found print statement
+	outMessage("ANALYZER --- Found Print Statement");
+
+}
+
+function aIfStmt(stream, index) {
+	// Print found if statement
+	outMessage("ANALYZER --- Found If Statement");
+
+}
+
+function aWhileStmt(stream, index) {
+	// Print found while statement
+	outMessage("ANALYZER --- Found While Statement");
+
+}
+
+function checkID(stream, index) {
+
+}
+
+function addSymbol() {
+
+}
+
+function printTable() {
 
 }

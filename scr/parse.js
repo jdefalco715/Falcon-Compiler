@@ -12,9 +12,6 @@ var braceLvl = 0;
 
 
 function parse(tkns, progNumber) {
-	// Need to handle braces for levels of CST
-	var scopeLvl = 0;
-
 	// New array to edit through parser, so orignial stream of tokens remains intact
 	stream = tkns;
 
@@ -32,6 +29,8 @@ function parse(tkns, progNumber) {
 
 	// Output prasing programing #
 	outMessage("INFO   PARSER -- Parsing program " + progNumber);
+
+	outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
 
 	// Start with program
   	program(stream , cst);
@@ -52,6 +51,7 @@ function parse(tkns, progNumber) {
 
 		// Move to semantic analysis
 		// Not sure yet if using CST or token stream for anaylsis
+		/* analyze(tkns, progNumber); */
 
 	} else {
 
