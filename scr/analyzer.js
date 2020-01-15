@@ -12,18 +12,49 @@ var symbolTable = [];
 
 function analyze(tkns, progNumber) {
 
+	// Output starting analyzer
 	outMessage("INFO   ANALYZER --- Analyzing program " + progNumber);
 
+	block(tkns);
+
+	// Check for errors
+	if (aErrors == 0) {
+
+		// Output successful analysis
+		outMessage("INFO   ANALYZER --- Success! Analyzer passed with " + 0 + " errors.");
+
+		// Display AST
+		buildAST(tkns);
+
+		// Display symbol table
+	} else {
+
+		// Output analyzer failed
+		outMessage("INFO   ANALYZER --- Failed! Analyzer failed with " + aErrors + " errors.");
+
+		// DO NOT display AST
+
+		// DO NOT display symbol table
+	}
+}
+
+function block(tkns) {
+
+	// Print found block
+	outMessage("ANALYZER --- Found Block");
+
+	// Add Block to AST
+	/* Found Block for AST goes here */
+	
 	// For loop cycles through stream of tokens
-	for (var i = 0; i < tkns.length, i++) {
+	// Var i will be incremented through function calls below
+	for (var i = 0; i < tkns.length;) {
 		// variable holder for current token
 		var curToken = tkns[i];
 
 		// Looks for left brace, increases scope level with brace
-		// Also prints found BLOCK in AST
 		if (curToken.type == "L_BRACE") {
 			scopeLvl++;
-			/* Found BLOCK for AST goes here */
 		}
 
 		// Looks for right brace, decreases scope level with brace
@@ -54,7 +85,7 @@ function analyze(tkns, progNumber) {
 
 }
 
-function aVarDecl(stream, index) {
+function aVarDecl(tkns, index) {
 	// Print found variable declaration
 	outMessage("ANALYZER --- Found Var Declaration");
 
@@ -65,7 +96,7 @@ function aVarDecl(stream, index) {
 
 }
 
-function aAssignStmt(stream, index) {
+function aAssignStmt(tkns, index) {
 	// Print found assign statement
 	outMessage("ANALYZER --- Found Assign Statement");
 
@@ -74,7 +105,7 @@ function aAssignStmt(stream, index) {
 
 }
 
-function aPrintStmt(stream, index) {
+function aPrintStmt(tkns, index) {
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
 
@@ -83,7 +114,7 @@ function aPrintStmt(stream, index) {
 
 }
 
-function aIfStmt(stream, index) {
+function aIfStmt(tkns, index) {
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
@@ -92,7 +123,7 @@ function aIfStmt(stream, index) {
 
 }
 
-function aWhileStmt(stream, index) {
+function aWhileStmt(tkns, index) {
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 
@@ -101,10 +132,11 @@ function aWhileStmt(stream, index) {
 
 }
 
-function checkID(stream, index) {
+function checkID(tkns, index) {
 
 }
 
+// Add entry to symbol table
 function addSymbol(name, type, line, scope) {
 	// Creates a var that holds the entry value
 	var temp = new Entry(name, type, line, scope);
@@ -115,6 +147,7 @@ function addSymbol(name, type, line, scope) {
 	return;
 }
 
+// Print entries of symbol table
 function printTable(symbolTable, progNumber) {
 
 	// Output header of symbol table
@@ -133,5 +166,7 @@ function printTable(symbolTable, progNumber) {
 		// NEEDS TO BE BETTER FORMATTED FOR CLEANER OUTPUT
 		outMessage(curEnt.name + "" + curEnt.type + "" + curEnt.line + "" + curEnt.scope);
 	}
+
+	return;
 
 }

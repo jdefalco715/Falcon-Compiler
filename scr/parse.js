@@ -10,8 +10,8 @@ var stream = [];
 var braceLvl = 0;
 
 
-
 function parse(tkns, progNumber) {
+
 	// New array to edit through parser, so orignial stream of tokens remains intact
 	stream = tkns;
 
@@ -33,7 +33,7 @@ function parse(tkns, progNumber) {
 	outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
 
 	// Start with program
-  	program(stream , cst);
+  	program(stream, cst);
 
   	if (pErrors == 0) {
 
@@ -711,9 +711,6 @@ function boolExpr(stream, cst) {
 
 			// Add to error counter
 			pErrors;
-
-			// Remove from array
-			stream.shift();
 		}
 
 	} else if (stream[0].type == "BOOL_F" || stream[0].type== "BOOL_T") {
