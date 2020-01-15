@@ -174,7 +174,6 @@ function block(stream, cst) {
 }
 
 function stmtList(stream, cst) {
-	console.log("stmtList: " + stream[0].type);
 	// finds a statment
 	// If not, no error. Statement list can accept empty string. Find brace.
 
