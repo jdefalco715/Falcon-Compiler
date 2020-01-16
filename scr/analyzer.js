@@ -3,19 +3,23 @@
 // Variable to keep current scope level
 var scopeLvl = 0;
 
-// Errors during symantic analysis
+// Errors during semantic analysis
 // Errors include type and scope mismatches
 var aErrors = 0;
+
+// Warnings during semantic analysis
+// Warnings are declared variables that are not used
+var aWarnings = 0;
 
 // Array for entries in symbol table
 var symbolTable = [];
 
-function analyze(tkns, progNumber) {
+function analyze(list, progNumber) {
 
 	// Output starting analyzer
 	outMessage("INFO   ANALYZER --- Analyzing program " + progNumber);
 
-	block(tkns);
+	block(list);
 
 	// Check for errors
 	if (aErrors == 0) {
@@ -23,34 +27,27 @@ function analyze(tkns, progNumber) {
 		// Output successful analysis
 		outMessage("INFO   ANALYZER --- Success! Analyzer passed with " + 0 + " errors.");
 
-		// Display AST
-		buildAST(tkns);
-
 		// Display symbol table
 	} else {
 
 		// Output analyzer failed
 		outMessage("INFO   ANALYZER --- Failed! Analyzer failed with " + aErrors + " errors.");
 
-		// DO NOT display AST
 
 		// DO NOT display symbol table
 	}
 }
 
-function block(tkns) {
+function block(list) {
 
 	// Print found block
 	outMessage("ANALYZER --- Found Block");
-
-	// Add Block to AST
-	/* Found Block for AST goes here */
 	
 	// For loop cycles through stream of tokens
 	// Var i will be incremented through function calls below
-	for (var i = 0; i < tkns.length;) {
+	for (var i = 0; i < list.length;) {
 		// variable holder for current token
-		var curToken = tkns[i];
+		var curToken = list[i];
 
 		// Looks for left brace, increases scope level with brace
 		if (curToken.type == "L_BRACE") {
@@ -63,50 +60,50 @@ function block(tkns) {
 
 		// Checks for TYPE token,  if found sends to aVarDecl function
 		if (curToken.type == "V_TYPE") {
-			aVarDecl(tkns, i);
+			aVarDecl(list, i);
 		}
 
 		// Checks for ID token, if found sends to checkID function
 		if (curToken.type == "ID") {
-			checkID(tkns, i);
+			checkID(list, i);
 		}
 
 		// Checks for IF token, if found sends to aIfStmt function
 		if (curToken.type == "IF") {
-			aIfStmt(tkns, i);
+			aIfStmt(list, i);
 		}
 
 		// Checks for WHILE token, if found sends to aWhileStmt function
 		if (curtoken.type == "WHILE") {
-			aWhileStmt(tkns, i)
+			aWhileStmt(list, i)
 		}
 	}
 
 
 }
 
-function aVarDecl(tkns, index) {
+function aVarDecl(list, index) {
 	// Print found variable declaration
 	outMessage("ANALYZER --- Found Var Declaration");
 
 	// Parameters for entry object
 	var na, ty, li, sc;
 
-	if (tkns[index].type == "V_TYPE") {
+	if (list[index].type == "V_TYPE") {
 		// Assign type as the type found at index
-		ty = tkns[index].kind;
+		ty = list[index].kind;
 
 		// Ensure next token is infact an ID
-		if (tkns[index + 1].type == "ID") {
+		if (list[index + 1].type == "ID") {
 
 			// Check to make sure ID is not found in symbol table
 			/* NOT SURE YET WHAT GOES HERE */
 
 			// Assign name as ID name
-			na = tkns[index + 1].kind;
+			na = list[index + 1].kind;
 
 			// Assign line as ID line
-			li = tkns[index + 1].kind;
+			li = list[index + 1].kind;
 
 			// Assign scope as current scope level
 			sc = scopeLvl;
@@ -126,7 +123,7 @@ function aVarDecl(tkns, index) {
 
 }
 
-function aAssignStmt(tkns, index) {
+function aAssignStmt(list, index) {
 	// Print found assign statement
 	outMessage("ANALYZER --- Found Assign Statement");
 
@@ -134,7 +131,7 @@ function aAssignStmt(tkns, index) {
 
 }
 
-function aPrintStmt(tkns, index) {
+function aPrintStmt(list, index) {
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
 
@@ -142,7 +139,7 @@ function aPrintStmt(tkns, index) {
 
 }
 
-function aIfStmt(tkns, index) {
+function aIfStmt(list, index) {
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
@@ -150,7 +147,7 @@ function aIfStmt(tkns, index) {
 
 }
 
-function aWhileStmt(tkns, index) {
+function aWhileStmt(list, index) {
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 
@@ -158,7 +155,7 @@ function aWhileStmt(tkns, index) {
 
 }
 
-function checkID(tkns, index) {
+function checkID(list, index) {
 
 }
 
@@ -190,7 +187,7 @@ function printTable(symbolTable, progNumber) {
 
 		// Output current entry details
 		// NEEDS TO BE BETTER FORMATTED FOR CLEANER OUTPUT
-		outMessage(curEnt.name + "" + curEnt.type + "" + curEnt.line + "" + curEnt.scope);
+		outMessage(curEnt.name + " " + curEnt.type + " " + curEnt.line + " " + curEnt.scope);
 	}
 
 	return;
