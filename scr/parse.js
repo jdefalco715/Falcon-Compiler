@@ -21,6 +21,9 @@ function parse(tkns, progNumber) {
 	// Define a new CST object
 	var cst = new Tree();
 
+	// Define a new AST object
+	var ast = new Tree();
+
 	// Add node
 	cst.addNode("Root", "branch");
 
@@ -33,7 +36,7 @@ function parse(tkns, progNumber) {
 	outMessage("INFO   PARSER -- current scope level is : " + braceLvl);
 
 	// Start with program
-  	program(stream, cst);
+  	program(stream, cst, ast);
 
   	if (pErrors == 0) {
 
@@ -53,6 +56,11 @@ function parse(tkns, progNumber) {
 		// Not sure yet if using CST or token stream for anaylsis
 		/* analyze(tkns, progNumber); */
 
+		// Test AST
+		outMessage("");
+		outMessage("INFO   AST - Displaying AST for program " + progNumber);
+		outMessage(ast.toString());
+
 	} else {
 
 		// Output parser failed
@@ -66,7 +74,7 @@ function parse(tkns, progNumber) {
 
 }
 
-function program(stream, cst) {
+function program(stream, cst, ast) {
 
 	// Output found program
 	outMessage("PARSER RULE -- Found [Program]");
@@ -74,7 +82,7 @@ function program(stream, cst) {
 	cst.addNode("Program", "branch");
 
 	// Goes to block
-	block(stream, cst);
+	block(stream, cst, ast);
 
 	// Check for EOP token
 	if(stream[0].type == "EOP") {
@@ -92,14 +100,18 @@ function program(stream, cst) {
 	return;
 }
 
-function block(stream, cst) {
+function block(stream, cst, ast) {
 	// Finds a brace, goes to statement list
 	// If no brace, then error
 
 	// Display found block
 	outMessage("PARSER RULE -- Found [Block]");
 
+	// Add node to CST
 	cst.addNode("Block", "branch");
+
+	// Add node to AST
+	ast.addNode("BLOCK", "branch");
 
 	if(stream[0].type == "L_BRACE") {
 
@@ -119,7 +131,7 @@ function block(stream, cst) {
 		stream.shift();
 
 		// Call statement list
-	  	stmtList(stream, cst);
+	  	stmtList(stream, cst, ast);
 
 	  	if(stream[0].type == "R_BRACE") {
 
@@ -173,7 +185,7 @@ function block(stream, cst) {
 	return;
 }
 
-function stmtList(stream, cst) {
+function stmtList(stream, cst, ast) {
 	// finds a statment
 	// If not, no error. Statement list can accept empty string. Find brace.
 
@@ -186,7 +198,7 @@ function stmtList(stream, cst) {
 	// As long is there is not an empty statement, will call statement function
 	// NOT SURE IF UNDEFINED IS CORRECT CALL
 	if (stream[0].type != ' ') {
-		stmt(stream, cst);
+		stmt(stream, cst, ast);
 	}
 
 	cst.endChild();
@@ -196,7 +208,7 @@ function stmtList(stream, cst) {
 
 }
 
-function stmt(stream, cst) {
+function stmt(stream, cst, ast) {
 
 	switch(stream[0].type){
 
@@ -205,8 +217,8 @@ function stmt(stream, cst) {
 			outMessage("PARSER RULE -- Found [Statement]");
 			// Add node to cst
 			cst.addNode("Statement", "branch");
-			printStmt(stream, cst);
-			stmt(stream, cst);
+			printStmt(stream, cst, ast);
+			stmt(stream, cst, ast);
 			break;
 
 	  	case "ID":      // ID
@@ -215,8 +227,8 @@ function stmt(stream, cst) {
 			// Add node to cst
 			cst.addNode("Statement", "branch");
 	  		cst.addNode("ID", "branch");
-	  		assignStmt(stream, cst);
-	  		stmt(stream, cst);
+	  		assignStmt(stream, cst, ast);
+	  		stmt(stream, cst, ast);
 	  		break;
 
 		case "ASSIGN": // Assignment
@@ -224,8 +236,8 @@ function stmt(stream, cst) {
 			outMessage("PARSER RULE -- Found [Statement]");
 			// Add node to cst
 			cst.addNode("Statement", "branch");
-			assignStmt(stream, cst);
-			stmt(stream, cst);
+			assignStmt(stream, cst, ast);
+			stmt(stream, cst, ast);
 	  		break;
 
 		case "IFSTMT": // If
@@ -233,8 +245,8 @@ function stmt(stream, cst) {
 			outMessage("PARSER RULE -- Found [Statement]");
 			// Add node to cst
 			cst.addNode("Statement", "branch");
-			ifStmt(stream, cst);
-			stmt(stream, cst);
+			ifStmt(stream, cst, ast);
+			stmt(stream, cst, ast);
 	  		break;
 
   		case "V_TYPE": // varDecl
@@ -242,8 +254,8 @@ function stmt(stream, cst) {
 			outMessage("PARSER RULE -- Found [Statement]");
 			// Add node to cst
 			cst.addNode("Statement", "branch");
-  			varDecl(stream, cst);
-			stmt(stream, cst);
+  			varDecl(stream, cst, ast);
+			stmt(stream, cst, ast);
 	  		break;
 
 		case "WHILESTMT": // While
@@ -251,8 +263,8 @@ function stmt(stream, cst) {
 			outMessage("PARSER RULE -- Found [Statement]");
 			// Add node to cst
 			cst.addNode("Statement", "branch");
-			whileStmt(stream, cst);
-			stmt(stream, cst);
+			whileStmt(stream, cst, ast);
+			stmt(stream, cst, ast);
 	  		break;
 
 		case "L_BRACE": // Block
@@ -260,8 +272,8 @@ function stmt(stream, cst) {
 			outMessage("PARSER RULE -- Found [Statement]");
 			// Add node to cst
 			cst.addNode("Statement", "branch");
-			block(stream, cst);
-			stmt(stream, cst);
+			block(stream, cst, ast);
+			stmt(stream, cst, ast);
 	  		break;
 
 	  	default: // Empty statement, should return to break recursion
@@ -271,13 +283,16 @@ function stmt(stream, cst) {
 	}
 }
 
-function printStmt(stream, cst) {
+function printStmt(stream, cst, ast) {
 	// Finds print keyword, then parenthesis, then expression
 	// If not, then error
 	outMessage("PARSER RULE -- Found [PrintStatement]");
 
-	// Add node to cst
+	// Add node to CST
 	cst.addNode("PrintStatement", "branch");
+
+	// Add node to AST
+	ast.addNode("PrintStatement", "branch");
 
 	// Output found print token (found in stmtList)
 	outMessage("PARSER TOKEN -- Found token [PRINT]")
@@ -300,7 +315,7 @@ function printStmt(stream, cst) {
 		stream.shift();
 
 		// Call expr
-		expr(stream, cst);
+		expr(stream, cst, ast);
 
 		if (stream[0].type == "R_PAREN") {
 
@@ -344,11 +359,13 @@ function printStmt(stream, cst) {
 	// Move branches
 	cst.endChild();
 
+	ast.endChild();
+
 	return;
 
 }
 
-function assignStmt(stream, cst) {
+function assignStmt(stream, cst, ast) {
 	// Finds ID, then assign, then expression
 	// If not, then error
 
@@ -358,11 +375,17 @@ function assignStmt(stream, cst) {
 	// Add node to cst
 	cst.addNode("AssignStatement", "branch");
 
+	// Add node to AST
+	ast.addNode("AssignStatement", "branch");
+
 	// Print found token 
 	outMessage("PARSER TOKEN -- Found token [ID] - " + stream[0].kind);
 
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
+
+	// Add ID value to ast
+	ast.addNode(stream[0].kind, "leaf");
 
 	// Remove from array
 	stream.shift();
@@ -382,7 +405,7 @@ function assignStmt(stream, cst) {
 		stream.shift();
 
 		// Call expression
-		expr(stream, cst);
+		expr(stream, cst, ast);
 	} else {
 
 		// Print error
@@ -395,10 +418,12 @@ function assignStmt(stream, cst) {
 		stream.shift();
 	}
 
+	ast.endChild();
+
 	return;
 }
 
-function varDecl(stream, cst) {
+function varDecl(stream, cst, ast) {
 	// Finds type, then ID
 	// If not, then error
 
@@ -408,11 +433,17 @@ function varDecl(stream, cst) {
 	// Add node to cst
 	cst.addNode("VarDeclaration", "branch");
 
+	// Add node to ast
+	ast.addNode("VarDeclaration", "branch");
+
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [V_TYPE] - " + stream[0].kind);
 
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
+
+	// Add type value to ast
+	ast.addNode(stream[0].kind, "leaf");
 
 	// Remove from array
 	stream.shift();
@@ -424,6 +455,9 @@ function varDecl(stream, cst) {
 
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
+
+		// Add ID value to ast
+		ast.addNode(stream[0].kind, "leaf");
 
 		// Remove from array
 		stream.shift();
@@ -442,10 +476,12 @@ function varDecl(stream, cst) {
 
 	cst.endChild();
 
+	ast.endChild();
+
 	return;
 }
 
-function whileStmt(stream, cst) {
+function whileStmt(stream, cst, ast) {
 	// Finds while, then bool expression, then block
 	// If not, then error
 
@@ -454,6 +490,9 @@ function whileStmt(stream, cst) {
 
 	// Add node to cst
 	cst.addNode("WhileStatement", "branch");
+
+	// Add node to ast
+	ast.addNode("WhileStatement", "branch");
 
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [WHILE]");
@@ -465,17 +504,19 @@ function whileStmt(stream, cst) {
 	stream.shift();
 
 	// Call boolean expression
-	boolExpr(stream, cst);
+	boolExpr(stream, cst, ast);
 
 	// Call block
-	block(stream, cst);
+	block(stream, cst, ast);
 
-	endChild();
+	cst.endChild();
+
+	ast.endChild();
 
 	return;
 }
 
-function ifStmt(stream, cst) {
+function ifStmt(stream, cst, ast) {
 	// Finds if, then calls bool expression, then calls block
 
 	// Print found rule
@@ -483,6 +524,9 @@ function ifStmt(stream, cst) {
 
 	// Add node to cst
 	cst.addNode("IfStatement", "branch");
+
+	// Add node to ast
+	ast.addNode("IfStatement", "branch");
 
 	// Print found token
 	outMessage("PARSER TOKEN -- Found token [IF]");
@@ -497,18 +541,21 @@ function ifStmt(stream, cst) {
 	stream.shift();
 
 	// Call boolean expression
-	boolExpr(stream, cst);
+	boolExpr(stream, cst, ast);
 
 	// Call block
-	block(stream, cst);
+	block(stream, cst, ast);
+
 
 	// Move branches
 	cst.endChild();
 
+	ast.endChild();
+
 	return;
 }
 
-function expr(stream, cst) {
+function expr(stream, cst, ast) {
 	// Finds int, string, or bool expression, or ID
 	// If not, then error
 
@@ -520,15 +567,15 @@ function expr(stream, cst) {
 
 	if (stream[0].type == "QUOTE") {
 
-		stringExpr(stream, cst);
+		stringExpr(stream, cst, ast);
 
 	} else if (stream[0].type == "DIGIT") {
 
-		intExpr(stream, cst);
+		intExpr(stream, cst, ast);
 
 	}else if (stream[0].type == "L_PAREN" || stream[0].type == "BOOL_T" || stream[0].type == "BOOL_F") {
 
-		boolExpr(stream, cst);
+		boolExpr(stream, cst, ast);
 
 	} else if (stream[0].type == "ID") {
 		
@@ -537,6 +584,9 @@ function expr(stream, cst) {
 
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
+
+		// Add ID value to ast
+		ast.addNode(stream[0].kind, "leaf");
 
 		// Remove from stream
 		stream.shift();
@@ -548,7 +598,7 @@ function expr(stream, cst) {
 	return;
 }
 
-function intExpr(stream, cst) {
+function intExpr(stream, cst, ast) {
 	// Finds digit, then int operator, then expression
 	// If not, then error
 
@@ -564,6 +614,9 @@ function intExpr(stream, cst) {
 	// Add token to cst
 	cst.addNode(stream[0].kind, "leaf");
 
+	// Add digit value to ast
+	ast.addNode(stream[0].kind, "leaf");
+
 	// Remove from array
 	stream.shift();
 
@@ -578,13 +631,15 @@ function intExpr(stream, cst) {
 		// Remove from array
 		stream.shift();
 
-		expr(stream, cst);
+		expr(stream, cst, ast);
 	}
+
+	ast.endChild();
 
 	return;
 }
 
-function stringExpr(stream, cst) {
+function stringExpr(stream, cst, ast) {
 
 	// Print found rule
 	outMessage("PARSER RULE -- Found [StringExpression]");
@@ -612,8 +667,14 @@ function stringExpr(stream, cst) {
 		// Add node to cst
 		cst.addNode("CharList", "branch");
 
+		// Variable to hold string for ast
+		var stringValue = "";
+
 		// Call charList
-		charList(stream, cst);
+		charList(stream, cst, stringValue);
+
+		// Add string to ast
+		ast.addNode(stringValue, "leaf");
 
 		if (stream[0].type == "QUOTE") {
 			// Print found token
@@ -637,10 +698,12 @@ function stringExpr(stream, cst) {
 		pErrors++;
 	}
 
+	ast.endChild();
+
 	return;
 }
 
-function boolExpr(stream, cst) {
+function boolExpr(stream, cst, ast) {
 	// Finds paren, then expression, bool operator, then expression, then paren
 	// If not, then error
 
@@ -663,7 +726,7 @@ function boolExpr(stream, cst) {
 		stream.shift();
 
 		// Call expression
-		expr(stream, cst);
+		expr(stream, cst, ast);
 
 		// Expect boolop
 		if (stream[0].type == "ISEQUAL" || stream[0].type == "NOTEQUAL") {
@@ -686,7 +749,7 @@ function boolExpr(stream, cst) {
 		}
 
 		// Call expression (again)
-		expr(stream, cst);
+		expr(stream, cst, ast);
 
 		// Check for closing brace
 		if (stream[0].type == "R_PAREN") {
@@ -721,6 +784,9 @@ function boolExpr(stream, cst) {
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
 
+		// Add token value to ast
+		ast.addNode(stream[0].kind, "leaf");
+
 		// Move branches
 		cst.endChild();
 
@@ -737,12 +803,13 @@ function boolExpr(stream, cst) {
 		pErrors++;
 	}
 
+	ast.endChild();
 
 	return;
 
 }
 
-function charList(stream, cst) {
+function charList(stream, cst, stringValue) { 
 
 	if (stream[0].type == "CHAR" || stream[0].type == "SPACE") {
 
@@ -752,11 +819,14 @@ function charList(stream, cst) {
 		// Add token to cst
 		cst.addNode(stream[0].kind, "leaf");
 
+		// Add char found to string
+		stringValue = stringValue + stream[0].kind;
+
 		// Remove from array
 		stream.shift();
 
 		// call Charlist
-		charList(stream, cst);
+		charList(stream, cst, stringValue);
 	}
 
 	return;
