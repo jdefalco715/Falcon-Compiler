@@ -89,10 +89,40 @@ function aVarDecl(tkns, index) {
 	// Print found variable declaration
 	outMessage("ANALYZER --- Found Var Declaration");
 
-	// Add VarDecl to AST
-	/* Found VarDecl for AST goes here */
+	// Parameters for entry object
+	var na, ty, li, sc;
 
+	if (tkns[index].type == "V_TYPE") {
+		// Assign type as the type found at index
+		ty = tkns[index].kind;
 
+		// Ensure next token is infact an ID
+		if (tkns[index + 1].type == "ID") {
+
+			// Check to make sure ID is not found in symbol table
+			/* NOT SURE YET WHAT GOES HERE */
+
+			// Assign name as ID name
+			na = tkns[index + 1].kind;
+
+			// Assign line as ID line
+			li = tkns[index + 1].kind;
+
+			// Assign scope as current scope level
+			sc = scopeLvl;
+
+			// Add entry to symbol table
+			addSymbol(na, ty, li, sc);
+
+		} else {
+			// Error 
+		}
+
+	} else {
+		// Error
+	}
+
+	return;
 
 }
 
@@ -100,8 +130,7 @@ function aAssignStmt(tkns, index) {
 	// Print found assign statement
 	outMessage("ANALYZER --- Found Assign Statement");
 
-	// Add AssignStmt to AST
-	/* Found AssignStmt for AST goes here */
+	
 
 }
 
@@ -109,8 +138,7 @@ function aPrintStmt(tkns, index) {
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
 
-	// Add PrintStmt to AST
-	/* Found PrintStmt for AST goes here */
+	
 
 }
 
@@ -118,8 +146,7 @@ function aIfStmt(tkns, index) {
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
-	// Add IfStmt to AST
-	/* Found IfStmt for AST goes here */
+	
 
 }
 
@@ -127,8 +154,7 @@ function aWhileStmt(tkns, index) {
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 
-	// Add WhileStmt to AST
-	/* Found WhileStmt for AST goes here */
+	
 
 }
 
