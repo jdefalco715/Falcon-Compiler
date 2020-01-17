@@ -432,7 +432,7 @@ function lexer(){
 			   		if ((line.slice(tokenPointer, tokenPointer + 2)).match(NOT_EQUALS)) {
 
 			   			// Add NOTEQUAL token
-			   			addToken("NOTEQUAUL", "!=", i + 1, tokenPointer + 1);
+			   			addToken("NOTEQUAL", "!=", i + 1, tokenPointer + 1);
 
 			   			// Move pointer
 			   			tokenPointer += 2;

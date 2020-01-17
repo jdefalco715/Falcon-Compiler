@@ -57,7 +57,7 @@ function parse(tkns, progNumber) {
 
 		// Move to semantic analysis
 		// Not sure yet if using CST or token stream for anaylsis
-		analyze(analyseList, progNumber);
+		// analyzer(analyseList, progNumber);
 
 		// Test AST
 		outMessage("");
@@ -116,8 +116,6 @@ function block(stream, cst, ast) {
 	// Add node to AST
 	ast.addNode("BLOCK", "branch");
 
-	addAnalyseEntry("Block", "statement", stream[0].line);
-
 	if(stream[0].type == "L_BRACE") {
 
 		// Output token found
@@ -125,6 +123,9 @@ function block(stream, cst, ast) {
 
 		// Add node for token
 		cst.addNode(stream[0].kind, "leaf");
+
+		// Add ast entry to array
+		addAnalyseEntry(stream[0].kind, "L_BRACE", stream[0].line);
 
 		// Increment brace level
 		braceLvl++;
@@ -147,6 +148,9 @@ function block(stream, cst, ast) {
 
 			// Add node for token
 			cst.addNode(stream[0].kind, "leaf");
+
+			// Add ast entry to array
+			addAnalyseEntry(stream[0].kind, "R_BRACE", stream[0].line);
 
 			// Move branches
 			cst.endChild();
@@ -299,6 +303,7 @@ function printStmt(stream, cst, ast) {
 	// Add node to AST
 	ast.addNode("PrintStatement", "branch");
 
+	// Add ast entry to array
 	addAnalyseEntry("PrintStatement", "statement", stream[0].line);
 
 	// Output found print token (found in stmtList)
@@ -385,6 +390,7 @@ function assignStmt(stream, cst, ast) {
 	// Add node to AST
 	ast.addNode("AssignStatement", "branch");
 
+	// Add ast entry to array
 	addAnalyseEntry("AssignStatement", "statement", stream[0].line);
 
 	// Print found token 
@@ -396,7 +402,8 @@ function assignStmt(stream, cst, ast) {
 	// Add ID value to ast
 	ast.addNode(stream[0].kind, "leaf");
 
-	addAnalyseEntry(stream[0].kind, "token", stream[0].line);
+	// Add ast entry to array
+	addAnalyseEntry(stream[0].kind, "ID", stream[0].line);
 
 	// Remove from array
 	stream.shift();
@@ -447,6 +454,7 @@ function varDecl(stream, cst, ast) {
 	// Add node to ast
 	ast.addNode("VarDeclaration", "branch");
 
+	// Add ast entry to array
 	addAnalyseEntry("VarDeclaration", "statement", stream[0].line);
 
 	// Print found token
@@ -458,7 +466,8 @@ function varDecl(stream, cst, ast) {
 	// Add type value to ast
 	ast.addNode(stream[0].kind, "leaf");
 
-	addAnalyseEntry(stream[0].kind, "token", stream[0].line);
+	// Add ast entry to array
+	addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
 
 	// Remove from array
 	stream.shift();
@@ -474,7 +483,8 @@ function varDecl(stream, cst, ast) {
 		// Add ID value to ast
 		ast.addNode(stream[0].kind, "leaf");
 
-		addAnalyseEntry(stream[0].kind, "token", stream[0].line);
+		// Add ast entry to array
+		addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
 
 		// Remove from array
 		stream.shift();
@@ -511,6 +521,7 @@ function whileStmt(stream, cst, ast) {
 	// Add node to ast
 	ast.addNode("WhileStatement", "branch");
 
+	// Add ast entry to array
 	addAnalyseEntry("WhileStatement", "statement", stream[0].line);
 
 	// Print found token
@@ -547,6 +558,7 @@ function ifStmt(stream, cst, ast) {
 	// Add node to ast
 	ast.addNode("IfStatement", "branch");
 
+	// Add ast entry to array
 	addAnalyseEntry("IfStatement", "statement", stream[0].line);
 
 	// Print found token
@@ -609,7 +621,8 @@ function expr(stream, cst, ast) {
 		// Add ID value to ast
 		ast.addNode(stream[0].kind, "leaf");
 
-		addAnalyseEntry(stream[0].kind, "token", stream[0].line);
+		// Add ast entry to array
+		addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
 
 		// Remove from stream
 		stream.shift();
@@ -640,7 +653,8 @@ function intExpr(stream, cst, ast) {
 	// Add digit value to ast
 	ast.addNode(stream[0].kind, "leaf");
 
-	addAnalyseEntry(stream[0].kind, "token", stream[0].line);
+	// Add ast entry to array
+	addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
 
 	// Remove from array
 	stream.shift();
@@ -701,7 +715,8 @@ function stringExpr(stream, cst, ast) {
 		// Add string to ast
 		ast.addNode(stringValue, "leaf");
 
-		addAnalyseEntry(stringValue, "token", stream[0].line);
+		// Add ast entry to array
+		addAnalyseEntry(stringValue, stream[0].type, stream[0].line);
 
 		if (stream[0].type == "QUOTE") {
 			// Print found token
@@ -764,6 +779,10 @@ function boolExpr(stream, cst, ast) {
 			// Add token to cst
 			cst.addNode(stream[0].kind, "leaf");
 
+			ast.addNode(stream[0].type, "leaf");
+
+			addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
+
 			// Remove from array
 			stream.shift();
 		} else {
@@ -790,6 +809,8 @@ function boolExpr(stream, cst, ast) {
 			// Move branches
 			cst.endChild();
 
+			ast.endChild();
+
 			// Remove from array
 			stream.shift();
 
@@ -814,7 +835,8 @@ function boolExpr(stream, cst, ast) {
 		// Add token value to ast
 		ast.addNode(stream[0].kind, "leaf");
 
-		addAnalyseEntry(stream[0].kind, "token", stream[0].line);
+		// Add ast entry to array
+		addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
 
 		// Move branches
 		cst.endChild();
@@ -831,8 +853,6 @@ function boolExpr(stream, cst, ast) {
 		// Add to error counter
 		pErrors++;
 	}
-
-	ast.endChild();
 
 	return;
 
@@ -864,7 +884,9 @@ function charList(stream, cst, stringValue) {
 // Add entry to analyseList array
 function addAnalyseEntry(name, type, line) {
 	// Temporary value to add to array of ast entries
-	var temp = new astObject(name, type line);
+	var temp = new astObject(name, type, line);
+
+	console.log(temp.name+ ", " +temp.type+", "+ temp.line);
 
 	// Add entry to array
 	analyseList.push(temp);

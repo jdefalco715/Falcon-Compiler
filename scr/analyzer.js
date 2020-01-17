@@ -14,12 +14,12 @@ var aWarnings = 0;
 // Array for entries in symbol table
 var symbolTable = [];
 
-function analyze(list, progNumber) {
+function analyzer(list, progNumber) {
 
 	// Output starting analyzer
 	outMessage("INFO   ANALYZER --- Analyzing program " + progNumber);
 
-	block(list);
+	aBlock(list);
 
 	// Check for errors
 	if (aErrors == 0) {
@@ -28,6 +28,7 @@ function analyze(list, progNumber) {
 		outMessage("INFO   ANALYZER --- Success! Analyzer passed with " + 0 + " errors.");
 
 		// Display symbol table
+
 	} else {
 
 		// Output analyzer failed
@@ -35,47 +36,60 @@ function analyze(list, progNumber) {
 
 
 		// DO NOT display symbol table
+	
 	}
 }
 
-function block(list) {
-
-	// Print found block
-	outMessage("ANALYZER --- Found Block");
+function aBlock(list) {
 	
 	// For loop cycles through stream of tokens
 	// Var i will be incremented through function calls below
 	for (var i = 0; i < list.length;) {
 		// variable holder for current token
-		var curToken = list[i];
+		var curElement = list[i];
 
 		// Looks for left brace, increases scope level with brace
-		if (curToken.type == "L_BRACE") {
+		if (curElement.name == "{") {
+
+			// Print found block
+			outMessage("ANALYZER --- Found Block");
+
 			scopeLvl++;
+			i++;
 		}
 
 		// Looks for right brace, decreases scope level with brace
-		if (curToken.type == "R_BRACE")
+		if (curElement.name == "}") {
 			scopeLvl--;
-
-		// Checks for TYPE token,  if found sends to aVarDecl function
-		if (curToken.type == "V_TYPE") {
-			aVarDecl(list, i);
+			i++;
 		}
 
-		// Checks for ID token, if found sends to checkID function
-		if (curToken.type == "ID") {
-			checkID(list, i);
-		}
+		if (curElement.type == "statement") { 
 
-		// Checks for IF token, if found sends to aIfStmt function
-		if (curToken.type == "IF") {
-			aIfStmt(list, i);
-		}
+			// Checks for TYPE token,  if found sends to aVarDecl function
+			if (curElement.name == "VarDeclaration") {
+				aVarDecl(list, i + 1);
 
-		// Checks for WHILE token, if found sends to aWhileStmt function
-		if (curtoken.type == "WHILE") {
-			aWhileStmt(list, i)
+				// Increment index by three to get to next statement
+				// skips over type and id
+				i += 3;
+			}
+
+			// Checks for ID token, if found sends to checkID function
+			if (curElement.type == "ID") {
+				// Check to see if ID is already in symbol table
+				checkID(list, i);
+			}
+
+			// Checks for IF token, if found sends to aIfStmt function
+			if (curElement.name == "IfStatement") {
+				aIfStmt(list, i);
+			}
+
+			// Checks for WHILE token, if found sends to aWhileStmt function
+			if (curElement.name == "WhileStatement") {
+				aWhileStmt(list, i)
+			}
 		}
 	}
 
@@ -97,7 +111,7 @@ function aVarDecl(list, index) {
 		if (list[index + 1].type == "ID") {
 
 			// Check to make sure ID is not found in symbol table
-			/* NOT SURE YET WHAT GOES HERE */
+			/* checkID */
 
 			// Assign name as ID name
 			na = list[index + 1].kind;
@@ -155,6 +169,9 @@ function aWhileStmt(list, index) {
 
 }
 
+// This function is to check if the entry of an ID is already in symbol table
+// Ensures that at least the ID name and the scope are different
+// Will return true or false
 function checkID(list, index) {
 
 }
@@ -181,7 +198,7 @@ function printTable(symbolTable, progNumber) {
 	
 
 
-	for (int y = 0; y < symbolTable.length, y++) {
+	for (var y = 0; y < symbolTable.length; y++) {
 		// Temporary var to hold current entry
 		var curEnt = symbolTable[y];
 
