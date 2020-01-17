@@ -57,7 +57,7 @@ function parse(tkns, progNumber) {
 
 		// Move to semantic analysis
 		// Not sure yet if using CST or token stream for anaylsis
-		// analyzer(analyseList, progNumber);
+		analyzer(analyseList, progNumber);
 
 		// Test AST
 		outMessage("");
@@ -716,7 +716,7 @@ function stringExpr(stream, cst, ast) {
 		ast.addNode(stringValue, "leaf");
 
 		// Add ast entry to array
-		addAnalyseEntry(stringValue, stream[0].type, stream[0].line);
+		addAnalyseEntry(stringValue, "STRING", stream[0].line);
 
 		if (stream[0].type == "QUOTE") {
 			// Print found token
@@ -885,8 +885,6 @@ function charList(stream, cst, stringValue) {
 function addAnalyseEntry(name, type, line) {
 	// Temporary value to add to array of ast entries
 	var temp = new astObject(name, type, line);
-
-	console.log(temp.name+ ", " +temp.type+", "+ temp.line);
 
 	// Add entry to array
 	analyseList.push(temp);
