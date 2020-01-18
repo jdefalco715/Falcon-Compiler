@@ -129,21 +129,29 @@ function aVarDecl(list, index) {
 		if (list[index + 1].type == "ID") {
 
 			// Check to make sure ID is not found in symbol table
-			/* checkID */
+			if (!(checkID(list, index + 1 ))) {
+				// Assign name as ID name
+				na = list[index + 1].name;
 
-			// Assign name as ID name
-			na = list[index + 1].name;
+				// Assign line as ID line
+				li = list[index + 1].line;
 
-			// Assign line as ID line
-			li = list[index + 1].line;
+				// Assign scope as current scope level
+				sc = scopeLvl;
 
-			// Assign scope as current scope level
-			sc = scopeLvl;
+				outMessage("ANALYZER --- Assigning variable [" + na + "] found on line (" + li + ") to type: " + ty);
 
-			outMessage("ANALYZER --- Assigning variable [" + na + "] found on line (" + li + ") to type: " + ty);
+				// Add entry to symbol table
+				addSymbol(na, ty, li, sc);
+			} else {
 
-			// Add entry to symbol table
-			addSymbol(na, ty, li, sc);
+				na = list[index + 1].name;
+				
+				// Error, variable trying to be declared has already been declared
+				outMessage("ANALYZER --- ERROR! Variable [" + na + "] has already been declared");
+
+				aErrors++;
+			}
 
 
 		} else {
@@ -213,6 +221,8 @@ function checkID(list, index) {
 			}
 		}
 	}
+
+	return match;
 
 }
 
