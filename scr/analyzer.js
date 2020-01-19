@@ -39,6 +39,7 @@ function analyzer(list, progNumber) {
 		// DO NOT display symbol table
 	
 	}
+
 }
 
 function aBlock(list) {
@@ -104,7 +105,9 @@ function aBlock(list) {
 				// skips over expr, boolop, and expr
 				i += 4;
 			}
+
 		}
+
 	}
 
 
@@ -128,16 +131,17 @@ function aVarDecl(list, index) {
 		// Ensure next token is infact an ID
 		if (list[index + 1].type == "ID") {
 
+			// Assign name as ID name
+			na = list[index + 1].name;
+
+			// Assign line as ID line
+			li = list[index + 1].line;
+
+			// Assign scope as current scope level
+			sc = scopeLvl;
+
 			// Check to make sure ID is not found in symbol table
 			if (!(checkID(list, index + 1 ))) {
-				// Assign name as ID name
-				na = list[index + 1].name;
-
-				// Assign line as ID line
-				li = list[index + 1].line;
-
-				// Assign scope as current scope level
-				sc = scopeLvl;
 
 				outMessage("ANALYZER --- Assigning variable [" + na + "] found on line (" + li + ") to type: " + ty);
 
@@ -145,21 +149,16 @@ function aVarDecl(list, index) {
 				addSymbol(na, ty, li, sc);
 			} else {
 
-				na = list[index + 1].name;
-				
 				// Error, variable trying to be declared has already been declared
 				outMessage("ANALYZER --- ERROR! Variable [" + na + "] has already been declared");
 
+				// Add to error counter
 				aErrors++;
+
 			}
 
+		} 
 
-		} else {
-			// Error 
-		}
-
-	} else {
-		// Error
 	}
 
 	return;
@@ -167,6 +166,7 @@ function aVarDecl(list, index) {
 }
 
 function aAssignStmt(list, index) {
+
 	// Print found assign statement
 	outMessage("ANALYZER --- Found Assign Statement");
 
@@ -175,6 +175,7 @@ function aAssignStmt(list, index) {
 }
 
 function aPrintStmt(list, index) {
+
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
 
@@ -183,6 +184,7 @@ function aPrintStmt(list, index) {
 }
 
 function aIfStmt(list, index) {
+
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
@@ -191,6 +193,7 @@ function aIfStmt(list, index) {
 }
 
 function aWhileStmt(list, index) {
+
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 

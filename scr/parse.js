@@ -5,12 +5,18 @@
 // Parse errors - defined by unexpected token in grammar rule
 var pErrors = 0;
 
+// Array to be set to the values of the token input stream
+// This way original stream of tokens remains in tact
 var stream = [];
 
+// Variable to hold level of scope
 var braceLvl = 0;
 
 // Array of nodes from ast, sent to semantic analyzer for analysis
 var analyseList = [];
+
+// Variable to hold string for ast
+var stringValue = "";
 
 
 function parse(tkns, progNumber) {
@@ -706,11 +712,15 @@ function stringExpr(stream, cst, ast) {
 		// Add node to cst
 		cst.addNode("CharList", "branch");
 
-		// Variable to hold string for ast
-		var stringValue = "";
+		// Set variable to hold string for ast to empty string
+		stringValue = "";
 
-		// Call charList
-		charList(stream, cst, stringValue);
+		console.log("StringValue at 718: " + stringValue);
+
+		// Call charList, changes value of stringValue
+		charList(stream, cst);
+
+		console.log("StringValue at 723: " + stringValue);
 
 		// Add string to ast
 		ast.addNode(stringValue, "leaf");
@@ -858,9 +868,11 @@ function boolExpr(stream, cst, ast) {
 
 }
 
-function charList(stream, cst, stringValue) { 
+function charList(stream, cst) { 
 
-	if (stream[0].type == "CHAR" || stream[0].type == "SPACE") {
+	// Loop continues and shifts elements off array, until the type is not valid in a char list
+	// Really, looks for if the type changes from CHAR/SPACE to QUOTE
+	while (stream[0].type == "CHAR" || stream[0].type == "SPACE") {
 
 		// Print found token
 		outMessage("PARSER TOKEN -- Found token [" + stream[0].type + "] - " + stream[0].kind);
@@ -873,9 +885,6 @@ function charList(stream, cst, stringValue) {
 
 		// Remove from array
 		stream.shift();
-
-		// call Charlist
-		charList(stream, cst, stringValue);
 	}
 
 	return;
