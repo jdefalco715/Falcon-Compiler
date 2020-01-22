@@ -660,7 +660,7 @@ function intExpr(stream, cst, ast) {
 	ast.addNode(stream[0].kind, "leaf");
 
 	// Add ast entry to array
-	addAnalyseEntry(stream[0].kind, stream[0].type, stream[0].line);
+	addAnalyseEntry(stream[0].kind, "DIGIT", stream[0].line);
 
 	// Remove from array
 	stream.shift();
@@ -715,12 +715,8 @@ function stringExpr(stream, cst, ast) {
 		// Set variable to hold string for ast to empty string
 		stringValue = "";
 
-		console.log("StringValue at 718: " + stringValue);
-
 		// Call charList, changes value of stringValue
 		charList(stream, cst);
-
-		console.log("StringValue at 723: " + stringValue);
 
 		// Add string to ast
 		ast.addNode(stringValue, "leaf");

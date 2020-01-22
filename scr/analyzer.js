@@ -16,6 +16,12 @@ var symbolTable = [];
 
 function analyzer(list, progNumber) {
 
+	symbolTable = [];
+
+	aErrors = 0;
+
+	aWarnings = 0;
+
 	// Output starting analyzer
 	outMessage("INFO   ANALYZER --- Analyzing program " + progNumber);
 
@@ -37,13 +43,13 @@ function analyzer(list, progNumber) {
 
 
 		// DO NOT display symbol table
-	
+
 	}
 
 }
 
 function aBlock(list) {
-	
+
 	// For loop cycles through stream of tokens
 	// Var i will be incremented through function calls below
 	for (var i = 0; i < list.length;) {
@@ -66,7 +72,7 @@ function aBlock(list) {
 			i++;
 		}
 
-		if (curElement.type == "statement") { 
+		if (curElement.type == "statement") {
 
 			// Checks for TYPE token,  if found sends to aVarDecl function
 			if (curElement.name == "VarDeclaration") {
@@ -80,8 +86,7 @@ function aBlock(list) {
 			// Checks for ID token, if found sends to checkID function
 			if (curElement.name == "AssignStatement") {
 				// Check to see if ID is already in symbol table
-				checkID(list, i);
-				aAssignStmt(list, i);
+				aAssignStmt(list, i+1);
 
 				// Increment index by three to get to next statement
 				// skips over id and value
@@ -141,7 +146,7 @@ function aVarDecl(list, index) {
 			sc = scopeLvl;
 
 			// Check to make sure ID is not found in symbol table
-			if (!(checkID(list, index + 1 ))) {
+			if ((checkID(list, index + 1 )) == -1) {
 
 				outMessage("ANALYZER --- Assigning variable [" + na + "] found on line (" + li + ") to type: " + ty);
 
@@ -157,7 +162,7 @@ function aVarDecl(list, index) {
 
 			}
 
-		} 
+		}
 
 	}
 
@@ -170,7 +175,63 @@ function aAssignStmt(list, index) {
 	// Print found assign statement
 	outMessage("ANALYZER --- Found Assign Statement");
 
-	
+	// Parameters for entry object
+	var na = "";
+	var sc = "";
+
+
+
+	// Check for ID
+	if(list[index].type == "ID") {
+
+		// Variables for information on ID found by analyzer
+		na = list[index].name;
+		sc = scopeLvl;
+
+		// Variable to validate ID in symbol table
+		// Will return index of found ID, or -1 if no ID was found
+		var hit = checkID(na, sc);
+
+		// Check to see if the ID is in the symbol table
+		if (hit != -1) {
+
+			// Variable to hold value in question for type checking
+			var testVal = list[index+1];
+
+			// Output found value
+			outMessage("ANALYZER --- Found value (" + testVal.name + ") of type \"" + testVal.type + "\" on line " + testVal.line);
+
+			// Ensure the types match
+			if (checkType(testVal.type, symbolTable[hit].type)) {
+
+				// Set found ID's value to new value
+				symbolTable[hit].value = testVal.name;
+
+				// Output changed value
+				outMessage("ANALYZER --- Setting the value of variable [" + na + "] to: " + testVal.name);
+
+			} else {
+
+				// Error for type mismatch
+				outMessage("ANALYZER --- ERROR! Type mismatch with variable [" + na + "] to value: " + testVal.name);
+
+				// Add to error counter
+				aErrors++;
+
+			}
+
+
+
+		} else {
+
+			// Error for undeclared variable
+			outMessage("ANALYZER --- ERROR! Variable [" + na + "] found on line " + list[index].line + " not previously defined.");
+
+			// Add to error counter
+			aErrors++;
+		}
+
+	}
 
 }
 
@@ -179,7 +240,7 @@ function aPrintStmt(list, index) {
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
 
-	
+
 
 }
 
@@ -188,7 +249,7 @@ function aIfStmt(list, index) {
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
-	
+
 
 }
 
@@ -197,16 +258,17 @@ function aWhileStmt(list, index) {
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 
-	
+
+
 
 }
 
 // This function is to check if the entry of an ID is already in symbol table
 // Ensures that at least the ID name and the scope are different
 // Will return true or false
-function checkID(list, index) {
+function checkID(idName, idScope) {
 	// Variable to see if variable is already in table
-	var match = false;
+	var match = -1;
 
 	// Element at index of list will always be an ID
 	// Go through elements, and check if the ID in question matches any of them
@@ -216,11 +278,11 @@ function checkID(list, index) {
 		var check = symbolTable[y];
 
 		// Compare the names between the two IDs
-		if (list[index].name == check.name) {
+		if (idName == check.name) {
 
 			// Compare the current scope with the elements scope
-			if (scopeLvl == check.scope) {
-				match = true;
+			if (idScope == check.scope) {
+				match = y;
 			}
 		}
 	}
@@ -229,15 +291,55 @@ function checkID(list, index) {
 
 }
 
+// This function takes the type of a proposed value, and compares it to the list type of the variable we are trying to assign the value to
+// Will return true or false
+function checkType(valType, testID) {
+
+	/* In AST array, values are given as so:
+	*	int = DIGIT
+	*	string = STRING
+	*	bool = BOOL_T or BOOL_F
+	*/
+
+	/* In Symbol table, types are as listed:
+	*	int
+	*	string
+	*	boolean
+	*/
+
+	// Boolean variable to be returned by function
+	var typeMatch = false
+
+	// Check int type
+	if (testID == "int" && valType == "DIGIT")
+		typeMatch = true;
+
+	// Check string type
+	if (testID == "string" && valType == "STRING")
+		typeMatch = true;
+
+	// Check boolean type
+	if (testID == "boolean" && (valType == "BOOL_F" || valType == "BOOL_T"))
+		typeMatch = true;
+
+	return typeMatch;
+
+}
+
 // Add entry to symbol table
 function addSymbol(name, type, line, scope) {
 	// Creates a var that holds the entry value
-	var temp = new Entry(name, type, line, scope);
+	var temp = new Entry(name, type, line, scope, undefined, false);
 
 	// Add entry to the symbol table
 	symbolTable.push(temp);
 
 	return;
+}
+
+// Function to call a symbol in question and alter its parameters
+function getSymbol(name, type, scope) {
+
 }
 
 // Print entries of symbol table
@@ -249,7 +351,7 @@ function printTable(symbolTable, progNumber) {
 	outMessage("---------------------------");
 	outMessage("Name   Type   Line   Scope ");
 	outMessage("===========================");
-	
+
 
 
 	for (var z = 0; z < symbolTable.length; z++) {
