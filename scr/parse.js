@@ -27,6 +27,9 @@ function parse(tkns, progNumber) {
 	// Initialize error count
 	pErrors = 0;
 
+	// Initialize analyse list
+	analyseList = [];
+
 	// Define a new CST object
 	var cst = new Tree();
 
@@ -64,7 +67,7 @@ function parse(tkns, progNumber) {
 		// Move to semantic analysis
 		// Not sure yet if using CST or token stream for anaylsis
 		analyzer(analyseList, progNumber);
-
+		
 		// Test AST
 		outMessage("");
 		outMessage("INFO   AST - Displaying AST for program " + progNumber);
@@ -80,6 +83,8 @@ function parse(tkns, progNumber) {
 		// Do NOT move to semantic analysis
 
 	}
+
+	return;
 
 }
 

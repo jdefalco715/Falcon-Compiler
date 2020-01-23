@@ -14,13 +14,20 @@ var aWarnings = 0;
 // Array for entries in symbol table
 var symbolTable = [];
 
-function analyzer(list, progNumber) {
+// Array to hold input
+var list = [];
+
+function analyzer(astList, progNumber) {
 
 	symbolTable = [];
 
+	list = astList;
+  console.log(list.length);
 	aErrors = 0;
 
 	aWarnings = 0;
+
+	scopeLvl = 0;
 
 	// Output starting analyzer
 	outMessage("INFO   ANALYZER --- Analyzing program " + progNumber);
@@ -31,7 +38,7 @@ function analyzer(list, progNumber) {
 	if (aErrors == 0) {
 
 		// Output successful analysis
-		outMessage("INFO   ANALYZER --- Success! Analyzer passed with " + 0 + " errors and " + aWarnings + " warnings.");
+		outMessage("INFO   ANALYZER --- Success! Analyzer passed with " + aErrors + " errors and " + aWarnings + " warnings.");
 
 		// Display symbol table
 		printTable(symbolTable, progNumber);
@@ -46,6 +53,7 @@ function analyzer(list, progNumber) {
 
 	}
 
+	return;
 }
 
 function aBlock(list) {
@@ -86,7 +94,7 @@ function aBlock(list) {
 			// Checks for ID token, if found sends to checkID function
 			if (curElement.name == "AssignStatement") {
 				// Check to see if ID is already in symbol table
-				aAssignStmt(list, i+1);
+				aAssignStmt(list, i + 1);
 
 				// Increment index by three to get to next statement
 				// skips over id and value
@@ -95,7 +103,7 @@ function aBlock(list) {
 
 			// Checks for IF token, if found sends to aIfStmt function
 			if (curElement.name == "IfStatement") {
-				aIfStmt(list, i);
+				aIfStmt(list, i + 1);
 
 				// Increment index by three to get to next statement
 				// skips over expr, boolop, and expr
@@ -104,16 +112,26 @@ function aBlock(list) {
 
 			// Checks for WHILE token, if found sends to aWhileStmt function
 			if (curElement.name == "WhileStatement") {
-				aWhileStmt(list, i)
+				aWhileStmt(list, i + 1)
 
 				// Increment index by three to get to next statement
 				// skips over expr, boolop, and expr
 				i += 4;
 			}
 
+			if (curElement.name == "PrintStatement") {
+				aPrintStmt(list, i + 1)
+
+				// Increment index by three to get to next statement
+				// skips over expr, boolop, and expr
+				i += 2;
+			}
+
 		}
 
 	}
+
+	return;
 
 
 }
@@ -145,8 +163,12 @@ function aVarDecl(list, index) {
 			// Assign scope as current scope level
 			sc = scopeLvl;
 
+			// Variable to validate ID in symbol table
+			// Will return index of found ID, or -1 if no ID was found
+			var hit = checkID(na, sc);
+
 			// Check to make sure ID is not found in symbol table
-			if ((checkID(list, index + 1 )) == -1) {
+			if (hit == -1) {
 
 				outMessage("ANALYZER --- Assigning variable [" + na + "] found on line (" + li + ") to type: " + ty);
 
@@ -233,6 +255,8 @@ function aAssignStmt(list, index) {
 
 	}
 
+	return;
+
 }
 
 function aPrintStmt(list, index) {
@@ -240,16 +264,169 @@ function aPrintStmt(list, index) {
 	// Print found print statement
 	outMessage("ANALYZER --- Found Print Statement");
 
+	// Parameters for entry object
+	var na = "";
+	var sc = "";
 
+	// Check for ID
+	if(list[index].type == "ID") {
+
+		// Variables for information on ID found by analyzer
+		na = list[index].name;
+		sc = scopeLvl;
+
+		// Variable to validate ID in symbol table
+		// Will return index of found ID, or -1 if no ID was found
+		var hit = checkID(na, sc);
+
+		// Check to see if the ID is in the symbol table
+		if (hit != -1) {
+
+			// Check that the variable has been defined
+			if (symbolTable[hit].value != undefined) {
+
+				// Output found variable
+				outMessage("ANALYZER --- Found variable [" + na + "] declared on line " + symbolTable[hit].line);
+
+			} else {
+
+				// Output warning of variable not defined
+				outMessage("ANALYZER --- WARNING! Variable [" + na + "] not previously defined");
+
+				// Add to warning counter
+				aWarnings++;
+			}
+
+		} else {
+
+			// Error for undeclared variable
+			outMessage("ANALYZER --- ERROR! Variable [" + na + "] found on line " + list[index].line + " not previously defined.");
+
+			// Add to error counter
+			aErrors++;
+
+		} 
+
+	} else {
+
+		// Output found value
+		outMessage("ANALYZER --- Found value " + list[index].name + " on line (" + list[index].line + ")");
+	}
+
+	return;
 
 }
+
 
 function aIfStmt(list, index) {
 
 	// Print found if statement
 	outMessage("ANALYZER --- Found If Statement");
 
+	// Parameters for entry object
+	var na = "";
+	var sc = "";
 
+	// Check for first part of bool expression
+	//validate that an id exists
+	if(list[index].type == "ID") {
+		// Variables for information on ID found by analyzer
+		na = list[index].name;
+		sc = scopeLvl;
+
+		// Variable to validate ID in symbol table
+		// Will return index of found ID, or -1 if no ID was found
+		var hit = checkID(na, sc);
+
+		// Check to see if the ID is in the symbol table
+		if (hit != -1) {
+
+			// Check that the variable has been defined
+			if (symbolTable[hit].value != undefined) {
+
+				// Output found variable
+				outMessage("ANALYZER --- Found variable [" + na + "] declared on line " + symbolTable[hit].line);
+
+			} else {
+
+				// Output warning of variable not defined
+				outMessage("ANALYZER --- WARNING! Variable [" + na + "] not previously defined");
+
+				// Add to warning counter
+				aWarnings++;
+			}
+
+		} else {
+
+			// Error for undeclared variable
+			outMessage("ANALYZER --- ERROR! Variable [" + na + "] found on line " + list[index].line + " not previously defined.");
+
+			// Add to error counter
+			aErrors++;
+
+		}
+
+	} else {
+
+		// Output found value
+		outMessage("ANALYZER --- Found value " + list[index].name + " on line (" + list[index].line + ")");
+
+	} 
+
+	if(list[index + 1].type == "ISEQUAL" || list[index + 1].type == "NOTEQUAL") {
+
+		// Output found boolop
+		outMessage("ANALYZER --- Found boolean operator in if statement: " + list[index + 1].type);
+
+	}
+
+	// Check for first part of bool expression
+	//validate that an id exists
+	if(list[index + 2].type == "ID") {
+		// Variables for information on ID found by analyzer
+		na = list[index + 2].name;
+		sc = scopeLvl;
+
+		// Variable to validate ID in symbol table
+		// Will return index of found ID, or -1 if no ID was found
+		var hit = checkID(na, sc);
+
+		// Check to see if the ID is in the symbol table
+		if (hit != -1) {
+
+			// Check that the variable has been defined
+			if (symbolTable[hit].value != undefined) {
+
+				// Output found variable
+				outMessage("ANALYZER --- Found variable [" + na + "] declared on line " + symbolTable[hit].line);
+
+			} else {
+
+				// Output warning of variable not defined
+				outMessage("ANALYZER --- WARNING! Variable [" + na + "] not previously defined");
+
+				// Add to warning counter
+				aWarnings++;
+			}
+
+		} else {
+
+			// Error for undeclared variable
+			outMessage("ANALYZER --- ERROR! Variable [" + na + "] found on line " + list[index].line + " not previously defined.");
+
+			// Add to error counter
+			aErrors++;
+
+		}
+
+	} else {
+
+		// Output found value
+		outMessage("ANALYZER --- Found value " + list[index + 2].name + " on line (" + list[index + 2].line + ")");
+
+	} 
+
+	return;
 
 }
 
@@ -258,8 +435,110 @@ function aWhileStmt(list, index) {
 	// Print found while statement
 	outMessage("ANALYZER --- Found While Statement");
 
+	// Parameters for entry object
+	var na = "";
+	var sc = "";
 
+	// Check for first part of bool expression
+	//validate that an id exists
+	if(list[index].type == "ID") {
+		// Variables for information on ID found by analyzer
+		na = list[index].name;
+		sc = scopeLvl;
 
+		// Variable to validate ID in symbol table
+		// Will return index of found ID, or -1 if no ID was found
+		var hit = checkID(na, sc);
+
+		// Check to see if the ID is in the symbol table
+		if (hit != -1) {
+
+			// Check that the variable has been defined
+			if (symbolTable[hit].value != undefined) {
+
+				// Output found variable
+				outMessage("ANALYZER --- Found variable [" + na + "] declared on line " + symbolTable[hit].line);
+
+			} else {
+
+				// Output warning of variable not defined
+				outMessage("ANALYZER --- WARNING! Variable [" + na + "] not previously defined");
+
+				// Add to warning counter
+				aWarnings++;
+			}
+
+		} else {
+
+			// Error for undeclared variable
+			outMessage("ANALYZER --- ERROR! Variable [" + na + "] found on line " + list[index].line + " not previously defined.");
+
+			// Add to error counter
+			aErrors++;
+
+		}
+
+	} else {
+
+		// Output found value
+		outMessage("ANALYZER --- Found value " + list[index].name + " on line (" + list[index].line + ")");
+
+	} 
+
+	if(list[index + 1].type == "ISEQUAL" || list[index + 1].type == "NOTEQUAL") {
+
+		// Output found boolop
+		outMessage("ANALYZER --- Found boolean operator in while statement: " + list[index + 1].type);
+
+	}
+
+	// Check for first part of bool expression
+	//validate that an id exists
+	if(list[index + 2].type == "ID") {
+		// Variables for information on ID found by analyzer
+		na = list[index + 2].name;
+		sc = scopeLvl;
+
+		// Variable to validate ID in symbol table
+		// Will return index of found ID, or -1 if no ID was found
+		var hit = checkID(na, sc);
+
+		// Check to see if the ID is in the symbol table
+		if (hit != -1) {
+
+			// Check that the variable has been defined
+			if (symbolTable[hit].value != undefined) {
+
+				// Output found variable
+				outMessage("ANALYZER --- Found variable [" + na + "] declared on line " + symbolTable[hit].line);
+
+			} else {
+
+				// Output warning of variable not defined
+				outMessage("ANALYZER --- WARNING! Variable [" + na + "] not previously defined");
+
+				// Add to warning counter
+				aWarnings++;
+			}
+
+		} else {
+
+			// Error for undeclared variable
+			outMessage("ANALYZER --- ERROR! Variable [" + na + "] found on line " + list[index].line + " not previously defined.");
+
+			// Add to error counter
+			aErrors++;
+
+		}
+
+	} else {
+
+		// Output found value
+		outMessage("ANALYZER --- Found value " + list[index + 2].name + " on line (" + list[index + 2].line + ")");
+
+	}
+
+	return;
 
 }
 
@@ -281,7 +560,7 @@ function checkID(idName, idScope) {
 		if (idName == check.name) {
 
 			// Compare the current scope with the elements scope
-			if (idScope == check.scope) {
+			if (idScope >= check.scope) {
 				match = y;
 			}
 		}
@@ -335,11 +614,6 @@ function addSymbol(name, type, line, scope) {
 	symbolTable.push(temp);
 
 	return;
-}
-
-// Function to call a symbol in question and alter its parameters
-function getSymbol(name, type, scope) {
-
 }
 
 // Print entries of symbol table
